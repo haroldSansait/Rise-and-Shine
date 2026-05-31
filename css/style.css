@@ -592,6 +592,7 @@ html, body {
   background: rgba(6, 8, 20, 0.97);
   border-left: 1px solid rgba(249,193,89,0.2);
   backdrop-filter: blur(20px);
+  z-index: 40;
 }
 
 .sidebar-level-badge {
@@ -644,7 +645,10 @@ html, body {
 
 /* ── Map Header panel ─────────────────────────────────────────── */
 #map-header-panel {
-  display: inline-block;
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 16px;
+  width: 100%;
 }
 
 /* ── Map HUD (bottom left) ───────────────────────────────────── */
@@ -1132,15 +1136,16 @@ html, body {
 
 /* Battle screen: Bookworm-style side panels and center quiz board */
 .battle-top-hud {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: block;
   width: 100%;
-  padding: 12px 28px;
-  background: linear-gradient(180deg, rgba(3,5,14,0.94), rgba(7,10,24,0.78));
+  height: 72px;
+  background: linear-gradient(180deg, rgba(3,5,14,0.96), rgba(7,10,24,0.9));
   border-bottom: 2px solid rgba(249,193,89,0.24);
-  backdrop-filter: blur(12px);
+  z-index: 20;
 }
 
 .battle-hud-cluster {
@@ -1256,15 +1261,10 @@ html, body {
 }
 
 .battle-stage-arena {
-  margin-inline: clamp(190px, 23vw, 280px);
+  margin-inline: 0 !important;
   margin-top: 4px;
-  width: auto !important;
-}
-
-.battle-center-question {
-  width: min(620px, calc(100vw - 430px));
-  margin: 0 auto 12px;
-  z-index: 17;
+  width: 100% !important;
+  overflow: visible !important;
 }
 
 .battle-party-group,
@@ -1277,12 +1277,12 @@ html, body {
 }
 
 .battle-party-group {
-  left: 9%;
+  left: 12%;
   gap: 34px;
 }
 
 .battle-enemy-group {
-  right: 10%;
+  right: 12%;
 }
 
 .fighter-byte {
@@ -1305,8 +1305,9 @@ html, body {
   width: 100%;
   min-width: 0;
   margin-top: 0 !important;
-  padding: 8px 10px !important;
+  padding: 5px 8px !important;
   font-size: 7px !important;
+  line-height: 1;
 }
 
 #battle-player-name,
@@ -1316,6 +1317,10 @@ html, body {
 }
 
 .battle-floor-platform {
+  position: absolute;
+  left: -100vw;
+  right: -100vw;
+  bottom: 0;
   height: 58px;
   background:
     linear-gradient(180deg, rgba(57,66,82,0.98) 0%, rgba(18,24,38,0.98) 46%, rgba(5,8,17,1) 100%);
@@ -1324,6 +1329,7 @@ html, body {
     0 -12px 26px rgba(0,0,0,0.62),
     inset 0 9px 0 rgba(255,255,255,0.08),
     inset 0 -5px 0 rgba(0,0,0,0.5);
+  z-index: 1;
 }
 
 .battle-floor-platform::before,
@@ -1335,33 +1341,83 @@ html, body {
   height: 28px;
   border-radius: 50%;
   background: radial-gradient(ellipse, rgba(249,193,89,0.28), rgba(249,193,89,0.08) 48%, transparent 70%);
+  z-index: 2;
 }
 
 .battle-floor-platform::before {
-  left: 8%;
+  left: 12%;
 }
 
 .battle-floor-platform::after {
-  right: 8%;
+  right: 12%;
 }
 
-@media (max-width: 920px) {
-  .battle-info-panel {
-    width: 170px;
-    padding: 12px;
-  }
+/* Restructured Bottom HUD Row */
+.battle-bottom-deck {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 260px;
+  background-color: #060814 !important;
+  border-top: 4px solid rgba(249,193,89,0.7) !important;
+  box-shadow: 0 -12px 30px rgba(0, 0, 0, 0.85);
+  z-index: 20;
+}
 
-  .battle-stage-arena {
-    margin-inline: 174px;
-  }
+.battle-bottom-row {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 10px;
+  width: 100%;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 24px;
+  padding-right: 24px;
+  z-index: 20;
+}
 
-  .battle-center-question {
-    width: calc(100vw - 360px);
-  }
+.battle-info-panel-restructured {
+  min-height: 0;
+  padding: 12px 14px;
+  background: #090d1f !important;
+  border: 2px solid rgba(249, 193, 89, 0.32);
+  border-radius: 8px;
+  box-shadow:
+    0 16px 30px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
 
-  .battle-answer-btn {
-    font-size: 12px;
-    padding: 8px 10px;
+.battle-info-panel-restructured.border-red-500\/36 {
+  border-color: rgba(239, 68, 68, 0.36) !important;
+}
+
+.battle-question-panel-restructured {
+  background: #090d1f !important;
+  border: 2px solid rgba(249, 193, 89, 0.32);
+  border-radius: 8px;
+  box-shadow:
+    0 16px 30px rgba(0, 0, 0, 0.5),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+@media (max-width: 1024px) {
+  .battle-bottom-deck {
+    height: auto !important;
+    position: relative !important;
+    border-top: none !important;
+  }
+  .battle-bottom-row {
+    grid-template-columns: 1fr !important;
+    gap: 12px;
+    padding-inline: 16px;
+  }
+  .battle-info-panel-restructured.col-span-3,
+  .battle-question-panel-restructured.col-span-6 {
+    grid-column: span 12 / span 12 !important;
   }
 }
 
@@ -1506,6 +1562,65 @@ html, body {
 }
 .scrollbar-thin::-webkit-scrollbar-thumb:hover {
   background: rgba(255,255,255,0.3);
+}
+
+/* ── Custom Retro Tooltips ────────────────────────────────────── */
+[data-tooltip] {
+  position: relative;
+}
+
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 135%; /* Display directly above the button */
+  left: 50%;
+  transform: translate(-50%, 6px) scale(0.95);
+  background: #090d1f;
+  border: 2px solid rgba(249, 193, 89, 0.85);
+  color: #ffffff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.35;
+  width: 170px;
+  white-space: normal;
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.22s cubic-bezier(0.25, 0.8, 0.25, 1);
+  z-index: 99999;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.85);
+  letter-spacing: 0.05em;
+}
+
+/* Tooltip triangular pointer arrow */
+[data-tooltip]::before {
+  content: '';
+  position: absolute;
+  bottom: calc(135% - 6px);
+  left: 50%;
+  transform: translate(-50%, 6px) scale(0.95);
+  border-width: 6px 6px 0;
+  border-style: solid;
+  border-color: rgba(249, 193, 89, 0.85) transparent transparent;
+  display: block;
+  width: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.22s cubic-bezier(0.25, 0.8, 0.25, 1);
+  z-index: 100000;
+}
+
+[data-tooltip]:hover::after {
+  opacity: 1;
+  transform: translate(-50%, 0) scale(1);
+}
+
+[data-tooltip]:hover::before {
+  opacity: 1;
+  transform: translate(-50%, 0) scale(1);
 }
 
 /* end of stylesheet */

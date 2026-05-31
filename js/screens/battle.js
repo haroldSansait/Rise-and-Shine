@@ -99,58 +99,6 @@ window.BattleScreen = (() => {
     },
   ];
 
-  // Randomized pool (20 prelim questions, excluding the 2 above)
-  const PRELIM_BANK = [
-    { q: 'Which device is commonly used to input text into a computer?',
-      choices: { A: 'Speaker', B: 'Monitor', C: 'Keyboard', D: 'Printer' }, answer: 'C' },
-    { q: 'Which computer part displays visual output?',
-      choices: { A: 'Scanner', B: 'Mouse', C: 'Keyboard', D: 'Monitor' }, answer: 'D' },
-    { q: 'Which component is often called the brain of the computer?',
-      choices: { A: 'CPU', B: 'Hard drive', C: 'Power supply', D: 'RAM' }, answer: 'A' },
-    { q: 'Which type of memory is temporary and clears when the computer turns off?',
-      choices: { A: 'HDD', B: 'SSD', C: 'RAM', D: 'ROM' }, answer: 'C' },
-    { q: 'Which storage device is usually faster than a traditional hard disk drive?',
-      choices: { A: 'DVD', B: 'Floppy disk', C: 'SSD', D: 'Printer' }, answer: 'C' },
-    { q: 'What does OS stand for?',
-      choices: { A: 'Online System', B: 'Output Service', C: 'Operating System', D: 'Open Software' }, answer: 'C' },
-    { q: 'Which of the following is an operating system?',
-      choices: { A: 'Windows', B: 'Adobe Photoshop', C: 'Google Chrome', D: 'Microsoft Word' }, answer: 'A' },
-    { q: 'Which software is used to browse websites?',
-      choices: { A: 'Database', B: 'Compiler', C: 'Web browser', D: 'Spreadsheet' }, answer: 'C' },
-    { q: 'Which of these is an input device?',
-      choices: { A: 'Printer', B: 'Mouse', C: 'Monitor', D: 'Speaker' }, answer: 'B' },
-    { q: 'Which of these is an output device?',
-      choices: { A: 'Scanner', B: 'Mouse', C: 'Keyboard', D: 'Printer' }, answer: 'D' },
-    { q: 'Which number system uses only 0 and 1?',
-      choices: { A: 'Binary', B: 'Decimal', C: 'Octal', D: 'Hexadecimal' }, answer: 'A' },
-    { q: 'How many bits are in one byte?',
-      choices: { A: '2', B: '16', C: '8', D: '4' }, answer: 'C' },
-    { q: 'What does GUI stand for?',
-      choices: { A: 'General User Internet', B: 'Graphical User Interface',
-                 C: 'Graphic Unit Instruction', D: 'Global Utility Input' }, answer: 'B' },
-    { q: 'What is hardware?',
-      choices: { A: 'Computer instructions', B: 'Network password',
-                 C: 'Website content',       D: 'Physical computer components' }, answer: 'D' },
-    { q: 'What is software?',
-      choices: { A: 'Physical computer parts', B: 'Internet cable',
-                 C: 'Programs and applications', D: 'Computer chair' }, answer: 'C' },
-    { q: 'What does URL stand for?',
-      choices: { A: 'Unified Routing Line', B: 'Universal Record Link',
-                 C: 'Uniform Resource Locator', D: 'User Reference Login' }, answer: 'C' },
-    { q: 'What is malware?',
-      choices: { A: 'A storage device', B: 'A keyboard type',
-                 C: 'Malicious software', D: 'Helpful software' }, answer: 'C' },
-    { q: 'What does Wi-Fi allow devices to do?',
-      choices: { A: 'Connect wirelessly to a network', B: 'Clean storage automatically',
-                 C: 'Print without ink', D: 'Increase battery capacity' }, answer: 'A' },
-    { q: 'What is programming?',
-      choices: { A: 'Writing instructions for computers', B: 'Cleaning hardware',
-                 C: 'Designing posters', D: 'Browsing websites' }, answer: 'A' },
-    { q: 'What is an algorithm?',
-      choices: { A: 'A computer brand', B: 'A step-by-step solution to a problem',
-                 C: 'A keyboard shortcut', D: 'A broken file' }, answer: 'B' },
-  ];
-
   // Tutorial callout text shown AFTER Q1 and Q2 are answered correctly
   const TUTORIAL_CALLOUTS = {
     1: 'Your companion Byte just attacked Bit Mite! Correct answers deal combined damage — yours plus your Byte\'s. Watch the enemy HP bar drop.',
@@ -158,15 +106,25 @@ window.BattleScreen = (() => {
   };
 
   function _buildQuestions() {
-    // If level data has its own questions bank, use it (10 random from the bank)
-    if (_levelData?.questionsBank && _levelData.questionsBank.length > 0) {
-      const shuffled = [..._levelData.questionsBank].sort(() => Math.random() - 0.5);
-      _questions = shuffled.slice(0, Math.min(10, shuffled.length));
+    // Level 1: tutorial flow uses 2 fixed tutorial questions + 8 unique random ones from Level 1's bank
+    if (_levelData?.id === 1) {
+      const pool = _levelData?.questionsBank || [];
+      // Filter out hardcoded tutorial questions to prevent duplicate rendering
+      const filteredPool = pool.filter(q => !TUTORIAL_QUESTIONS.some(t => t.q === q.q));
+      const shuffled = [...filteredPool].sort(() => Math.random() - 0.5);
+      _questions = [...TUTORIAL_QUESTIONS, ...shuffled.slice(0, 8)];
       return;
     }
-    // Level 1 (tutorial flow): fixed tutorial questions + random prelim bank
-    const shuffled = [...PRELIM_BANK].sort(() => Math.random() - 0.5);
-    _questions = [...TUTORIAL_QUESTIONS, ...shuffled.slice(0, 8)];
+
+    // Levels 2-5: Pull 30 randomized, unique questions from the level's disjoint bank
+    if (_levelData?.questionsBank && _levelData.questionsBank.length > 0) {
+      const shuffled = [..._levelData.questionsBank].sort(() => Math.random() - 0.5);
+      _questions = shuffled.slice(0, Math.min(30, shuffled.length));
+      return;
+    }
+
+    // Standard fallback
+    _questions = [...TUTORIAL_QUESTIONS];
   }
 
   // ── Hearts-based HP HUD (Bookworm Adventures style) ───────
@@ -186,11 +144,13 @@ window.BattleScreen = (() => {
       const heart = document.createElement('span');
       heart.className = 'inline-flex w-4 h-4 select-none transition-all duration-300';
       if (i < activeHearts) {
-        heart.innerHTML = window.PixelIcons?.icon('heart', 'w-4 h-4 inline-block align-middle fill-current text-red-500') ?? '';
+        // Red Heart SVG from Pixelarticons
+        heart.innerHTML = `<svg class="w-4 h-4 inline-block align-middle fill-current text-red-500" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M2 5v5h2v2h2v2h2v2h2v2h4v-2h2v-2h2v-2h2v-2h2V5h-4v2h-2V5h-8v2H8V5H2zm2 2h2v2H4V7zm4 0h2v2H8V7zm6 2h-2V7h2v2zm4-2h2v2h-2V7z"/></svg>`;
         heart.style.filter = 'drop-shadow(0 0 5px rgba(239, 68, 68, 0.75))';
       } else {
-        heart.innerHTML = window.PixelIcons?.icon('heart', 'w-4 h-4 inline-block align-middle fill-current text-zinc-800') ?? '';
-        heart.style.opacity = '0.35';
+        // Muted Heart SVG from Pixelarticons
+        heart.innerHTML = `<svg class="w-4 h-4 inline-block align-middle fill-current text-zinc-800" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M2 5v5h2v2h2v2h2v2h2v2h4v-2h2v-2h2v-2h2v-2h2V5h-4v2h-2V5h-8v2H8V5H2zm2 2h2v2H4V7zm4 0h2v2H8V7zm6 2h-2V7h2v2zm4-2h2v2h-2V7z"/></svg>`;
+        heart.style.opacity = '0.3';
       }
       wrap.appendChild(heart);
     }
@@ -1017,6 +977,31 @@ window.BattleScreen = (() => {
     if (enemyDesc) enemyDesc.textContent = _levelData?.enemyDesc ?? 'A corrupted Byte shaped by broken learning data.';
     const enemyStageName = document.getElementById('battle-enemy-name');
     if (enemyStageName) enemyStageName.textContent = enemyName;
+
+    // Dynamically update enemy role label
+    const enemyRole = document.getElementById('battle-enemy-role');
+    if (enemyRole) {
+      if (_levelData?.id === 5) {
+        enemyRole.textContent = 'Prelim Stage Boss';
+      } else {
+        enemyRole.textContent = 'Glitchborn Byte';
+      }
+    }
+
+    // Configure dynamic tooltips
+    const quitWrapper = document.getElementById('wrapper-battle-quit');
+    const submitWrapper = document.getElementById('wrapper-battle-submit');
+    const skillWrapper = document.getElementById('wrapper-byte-skill');
+
+    if (_levelData?.id === 1) {
+      if (quitWrapper) quitWrapper.setAttribute('data-tooltip', 'Click this to run away from this tutorial battle.');
+      if (submitWrapper) submitWrapper.setAttribute('data-tooltip', 'Confirm your selected answer and submit it.');
+      if (skillWrapper) skillWrapper.setAttribute('data-tooltip', "Activate your companion Byte's special ability when charged!");
+    } else {
+      if (quitWrapper) quitWrapper.setAttribute('data-tooltip', 'Abandon the current zone battle and return to the map screen.');
+      if (submitWrapper) submitWrapper.setAttribute('data-tooltip', 'Commit your choice and execute your turn.');
+      if (skillWrapper) skillWrapper.setAttribute('data-tooltip', "Unleash your Byte's active technique using accumulated energy.");
+    }
 
     // Dynamic enemy sprite window height based on whether it is a stage boss
     const enemyWin = document.getElementById('battle-enemy-sprite-window');

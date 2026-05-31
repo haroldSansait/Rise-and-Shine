@@ -479,7 +479,7 @@
     </div>
     <!-- Subtle overlay for readability -->
           <!-- Map header -->
-    <div class="relative z-30 p-4 flex items-start justify-between" id="map-header-panel" style="opacity:0;">
+    <div class="relative z-30 p-4 flex flex-wrap items-center justify-between gap-4 w-full" id="map-header-panel" style="opacity:0;">
       <div class="glass-panel inline-block px-6 py-3">
           <div class="font-pixel text-gold text-[8px] tracking-widest flex items-center gap-1.5">
             <svg class="w-4 h-4 text-orange-400 fill-current inline-block align-middle" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 3h2v2h-2V3zm-2 2h2v2h-2V5zm-2 2h2v2h-2V7zm-2 2h2v2h-2V9zm-2 2h2v2h-2v-2zm-2 2h2v2h-2v-2zm-2 2h2v2H7v-2zM5 17h2v2H5v-2zm-2 2h2v2H3v-2zm0-2h2v2H3v-2zm2-2h2v2H5v-2zm2-2h2v2H7v-2zm8 8h2v2h-2v-2zm-2-2h2v2h-2v-2zm-2-2h2v2h-2v-2zm-2-2h2v2h-2v-2z"/></svg> PRELIM ARC — THE FIRST AWAKENING
@@ -524,7 +524,7 @@
 
     <!-- Slide-out Sidebar -->
     <aside id="map-sidebar"
-           class="fixed right-0 top-0 h-full w-80 z-20"
+           class="fixed right-0 top-0 h-full w-80 z-40"
            style="transform: translateX(100%);"
            role="complementary"
            aria-label="Level Details">
@@ -701,6 +701,7 @@
 
     <!-- Background -->
     <div class="absolute inset-0 bg-cover bg-center"
+         id="battle-bg-img"
          style="background-image: url('scenes/PrelimMap/CorruptedClassroom_Prelim.png'); filter: brightness(0.55);"
          aria-hidden="true"></div>
     <div class="absolute inset-0 bg-black/35" aria-hidden="true"></div>
@@ -726,20 +727,19 @@
       </div>
     </div>
 
-    <div class="relative z-10 flex flex-col h-full">
-
-      <!-- ── Bookworm Adventures Inspired HUD row ── -->
-      <div class="battle-top-hud select-none z-20">
-
+    <!-- ── Full-Width Top HUD Vitals Bar (100% viewport width) ── -->
+    <div class="battle-top-hud select-none z-20 absolute top-0 left-0 right-0">
+      <div class="w-full px-12 flex items-center justify-between h-full relative">
+        
         <!-- Player HUD (left) -->
         <div class="battle-hud-cluster">
           <div class="flex items-center gap-2">
             <span id="player-hud-name" class="font-pixel text-gold text-[8px] tracking-widest drop-shadow-[0_0_4px_rgba(249,193,89,0.35)]"></span>
             <span class="font-pixel text-emerald-400 text-[6px] opacity-75">(PLAYER)</span>
           </div>
-          <!-- Hearts container for Player -->
+          <!-- Hearts/Progress ticks container for Player -->
           <div id="player-hearts-container" class="flex gap-0.5 flex-wrap">
-            <!-- Dynamically populated with ❤️ and 🖤 by JS -->
+            <!-- Dynamically populated with red Heart SVGs by JS -->
           </div>
           <div id="player-hp-text" class="font-pixel text-[6px] text-white/40 mt-0.5"></div>
         </div>
@@ -756,118 +756,143 @@
             <span class="font-pixel text-red-400 text-[6px] opacity-75">(ENEMY)</span>
             <span id="enemy-hud-name" class="font-pixel text-red-500 text-[8px] tracking-widest drop-shadow-[0_0_4px_rgba(239,68,68,0.35)]">BIT MITE</span>
           </div>
-          <!-- Hearts container for Enemy -->
+          <!-- Hearts/Progress ticks container for Enemy -->
           <div id="enemy-hearts-container" class="flex gap-0.5 flex-wrap justify-end">
-            <!-- Dynamically populated with ❤️ and 🖤 by JS -->
+            <!-- Dynamically populated with red Heart SVGs by JS -->
           </div>
           <div id="enemy-hp-text" class="font-pixel text-[6px] text-white/40 mt-0.5"></div>
         </div>
 
       </div>
+    </div>
 
-      <!-- ── Battle stage arena (Continuous Platform) ── -->
-      <aside class="battle-info-panel battle-info-player">
-        <div class="battle-panel-title">ALLY TEAM</div>
-        <div id="battle-player-card-name" class="battle-name-main"></div>
-        <div id="battle-player-role" class="battle-role-line">Hero</div>
-        <div class="battle-divider"></div>
-        <div id="battle-byte-card-name" class="battle-name-byte"></div>
-        <div id="battle-byte-ability" class="battle-ability-name">Byte Ability</div>
-        <p id="battle-byte-desc" class="battle-panel-copy"></p>
-        <div class="battle-skill-slot"></div>
-      </aside>
-
-      <aside class="battle-info-panel battle-info-enemy">
-        <div class="battle-panel-title">ENEMY BYTE</div>
-        <div id="battle-enemy-card-name" class="battle-name-main battle-name-enemy">BIT MITE</div>
-        <div class="battle-role-line">Glitchborn Byte</div>
-        <div class="battle-divider"></div>
-        <p id="battle-enemy-desc" class="battle-panel-copy"></p>
-      </aside>
-
-      <div class="battle-stage-arena flex-1 relative min-h-0 w-full overflow-hidden">
-        
-        <!-- Continuous Floor Platform Stage -->
-        <div class="battle-floor-platform"></div>
-
-        <!-- Left Fighter Group (Player + Byte) -->
-        <div class="battle-party-group fighter-platform-group select-none">
+    <!-- Main Battle Widescreen Arena -->
+    <div class="absolute top-[72px] bottom-[260px] left-0 right-0 overflow-visible z-10 flex items-center">
+      <div class="w-full max-w-[1240px] mx-auto h-full relative overflow-visible">
+        <div class="battle-stage-arena h-full w-full relative overflow-visible">
           
-          <!-- Player -->
-          <div class="fighter-container">
-            <div id="battle-player-sprite-window" class="sprite-window h-56 flex items-end justify-center relative">
-              <img id="battle-player-sprite-img" src="" class="sprite-sheet" alt="" draggable="false" onload="this.parentElement.style.aspectRatio = (this.naturalWidth / 4) / this.naturalHeight">
-            </div>
-            <div class="sprite-shadow"></div>
-            <span id="battle-player-name" class="font-pixel text-gold text-[7px] tracking-wider mt-2.5"></span>
-          </div>
+          <!-- Continuous Floor Platform Stage (overflows left & right to span 100vw bleed-to-bleed) -->
+          <div class="battle-floor-platform"></div>
 
-          <!-- Byte -->
-          <div class="fighter-container fighter-byte">
-            <div id="battle-byte-sprite-window" class="sprite-window h-36 flex items-end justify-center relative">
-              <img id="battle-byte-sprite-img" src="" class="sprite-sheet" alt="" draggable="false" onload="this.parentElement.style.aspectRatio = (this.naturalWidth / 4) / this.naturalHeight">
-            </div>
-            <div class="sprite-shadow"></div>
-            <span id="battle-byte-name" class="font-pixel text-[7px] text-white/50 tracking-wider mt-2"></span>
+          <!-- Left Fighter Group (Player + Byte) -->
+          <div class="battle-party-group fighter-platform-group select-none">
             
-            <!-- Byte Skill Activation Button -->
-            <button id="btn-byte-skill" 
-                    class="pixel-btn-secondary battle-skill-button mt-2 text-purple-300 font-pixel text-[6px] tracking-widest cursor-pointer active:scale-95 transition-all select-none"
-                    style="font-size: 6px; padding: 4px 8px; min-width: 80px;"
-                    aria-label="Use Byte Special Ability">
-              SKILL (0/3)
-            </button>
-          </div>
-
-        </div>
-
-        <!-- Right Fighter Group (Enemy) -->
-        <div class="battle-enemy-group fighter-platform-group select-none">
-          
-          <!-- Enemy -->
-          <div class="fighter-container">
-            <!-- Normal size is h-32, dynamically handled in JS if boss -->
-            <div id="battle-enemy-sprite-window" class="sprite-window h-32 flex items-end justify-center relative">
-              <div id="battle-enemy-sprite-wrapper" class="w-full h-full relative flex items-end justify-center">
-                <img id="battle-enemy-sprite-img" src="" class="sprite-sheet" alt="" draggable="false" onload="document.getElementById('battle-enemy-sprite-window').style.aspectRatio = (this.naturalWidth / 4) / this.naturalHeight">
+            <!-- Player -->
+            <div class="fighter-container">
+              <div id="battle-player-sprite-window" class="sprite-window h-56 flex items-end justify-center relative">
+                <img id="battle-player-sprite-img" src="" class="sprite-sheet" alt="" draggable="false" onload="this.parentElement.style.aspectRatio = (this.naturalWidth / 4) / this.naturalHeight">
               </div>
+              <div class="sprite-shadow"></div>
+              <span id="battle-player-name" class="font-pixel text-gold text-[7px] tracking-wider mt-2.5"></span>
             </div>
-            <div class="sprite-shadow"></div>
-            <span id="battle-enemy-name" class="font-pixel text-red-400 text-[7px] tracking-wider mt-2.5">BIT MITE</span>
+
+            <!-- Byte -->
+            <div class="fighter-container fighter-byte">
+              <div id="battle-byte-sprite-window" class="sprite-window h-36 flex items-end justify-center relative">
+                <img id="battle-byte-sprite-img" src="" class="sprite-sheet" alt="" draggable="false" onload="this.parentElement.style.aspectRatio = (this.naturalWidth / 4) / this.naturalHeight">
+              </div>
+              <div class="sprite-shadow"></div>
+              <span id="battle-byte-name" class="font-pixel text-[7px] text-white/50 tracking-wider mt-2"></span>
+              
+              <!-- Byte Skill Activation Button -->
+              <button id="btn-byte-skill" 
+                      class="pixel-btn-secondary battle-skill-button mt-2 text-purple-300 font-pixel text-[6px] tracking-widest cursor-pointer active:scale-95 transition-all select-none"
+                      style="font-size: 6px; padding: 4px 8px; min-width: 80px;"
+                      aria-label="Use Byte Special Ability">
+                SKILL (0/3)
+              </button>
+            </div>
+
+          </div>
+
+          <!-- Right Fighter Group (Enemy) -->
+          <div class="battle-enemy-group fighter-platform-group select-none">
+            
+            <!-- Enemy -->
+            <div class="fighter-container">
+              <div id="battle-enemy-sprite-window" class="sprite-window h-32 flex items-end justify-center relative">
+                <div id="battle-enemy-sprite-wrapper" class="w-full h-full relative flex items-end justify-center">
+                  <img id="battle-enemy-sprite-img" src="" class="sprite-sheet" alt="" draggable="false" onload="document.getElementById('battle-enemy-sprite-window').style.aspectRatio = (this.naturalWidth / 4) / this.naturalHeight">
+                </div>
+              </div>
+              <div class="sprite-shadow"></div>
+              <span id="battle-enemy-name" class="font-pixel text-red-400 text-[7px] tracking-wider mt-2.5">BIT MITE</span>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Solid Lower Deck Enclosure (100% Viewport Width) -->
+    <div class="battle-bottom-deck absolute bottom-0 left-0 right-0 bg-[#060814] z-20 flex items-center py-2 border-t-2 border-white/10" style="height: 260px;">
+      <!-- Constrained three-column row inside -->
+      <div class="battle-bottom-row w-full grid grid-cols-12 gap-2.5 h-full items-stretch px-12">
+        
+        <!-- Column 1: ALLY INFO PANEL -->
+        <aside class="battle-info-panel-restructured flex flex-col justify-between p-3 glass-panel border-2 border-gold/32 col-span-3 select-none bg-[#090d1f]">
+          <div class="battle-panel-title">ALLY INFO PANEL</div>
+          <div class="flex-1 flex flex-col gap-1.5 justify-start">
+            <div id="battle-player-card-name" class="battle-name-main"></div>
+            <div id="battle-player-role" class="battle-role-line">Hero</div>
+          </div>
+          <div class="border-t border-white/10 pt-3 flex flex-col gap-1 mt-auto">
+            <div class="flex items-center justify-between gap-2 mb-1.5">
+              <div id="battle-byte-card-name" class="battle-name-byte mb-0" style="margin-bottom: 0;"></div>
+              <div id="wrapper-byte-skill" class="battle-skill-slot mt-0 flex-shrink-0 w-24" style="margin-top: 0;"></div>
+            </div>
+            <div id="battle-byte-ability" class="battle-ability-name">Byte Ability</div>
+            <p id="battle-byte-desc" class="battle-panel-copy mt-1 max-h-12 overflow-y-auto pr-1 scrollbar-thin text-white"></p>
+          </div>
+        </aside>
+
+        <!-- Column 2: Question and MCQ panel (Solid Opaque, High Contrast, No Blur) -->
+        <div class="battle-question-panel-restructured col-span-6 flex flex-col justify-between px-4 py-2.5 bg-[#090d1f] border-2 border-gold/32 rounded-lg shadow-2xl">
+          
+          <div class="flex items-center justify-between mb-2">
+            <span id="battle-q-num" class="font-pixel text-gold text-[9px] font-bold">Q 1 / 10</span>
+            <span id="battle-result-line" class="font-ui text-sm font-bold text-white"></span>
+          </div>
+
+          <p id="battle-question" class="font-ui text-white text-sm font-semibold leading-snug mb-3"></p>
+
+          <div id="battle-answers" class="grid grid-cols-2 gap-1.5 mb-3"
+               role="radiogroup" aria-label="Answer choices">
+            <!-- Populated by battle.js -->
+          </div>
+
+          <div class="flex justify-between items-center">
+            <div id="wrapper-battle-quit" class="inline-block relative">
+              <button id="btn-battle-quit"
+                      class="pixel-btn-secondary px-6 py-2 font-pixel text-red-300 text-[8px] tracking-widest cursor-pointer active:scale-95 transition-all select-none flex items-center gap-1.5"
+                      aria-label="Quit battle and return to map">
+                <svg class="w-3.5 h-3.5 fill-current text-red-300 inline-block align-middle" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M4 2h2v20H4V2zm2 2h14v10H6V4zm2 2v2h4V6H8zm6 0v2h4V6h-4zm-6 4v2h4v-2H8zm6 0v2h4v-2h-4z"/></svg> RUN
+              </button>
+            </div>
+            <div id="wrapper-battle-submit" class="inline-block relative">
+              <button id="btn-battle-submit"
+                      class="pixel-btn px-8 py-2 font-pixel text-gold text-[8px] tracking-widest opacity-40 flex items-center gap-1.5"
+                      disabled
+                      aria-label="Submit selected answer">
+                SUBMIT <svg class="w-3 h-3 fill-current inline-block align-middle" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M10 6h-2v12h2v-2h2v-2h2v-2h-2V8h-2V6z"/></svg>
+              </button>
+            </div>
           </div>
 
         </div>
 
-      </div>
-
-      <!-- ── Question panel ── -->
-      <div class="battle-question-panel battle-center-question px-4 py-3">
-
-        <div class="flex items-center justify-between mb-2">
-          <span id="battle-q-num" class="font-pixel text-gold/50 text-[7px]">Q 1 / 10</span>
-          <span id="battle-result-line" class="font-ui text-sm font-bold"></span>
-        </div>
-
-        <p id="battle-question" class="font-ui text-white text-sm font-semibold leading-snug mb-3"></p>
-
-        <div id="battle-answers" class="grid grid-cols-2 gap-1.5 mb-3"
-             role="radiogroup" aria-label="Answer choices">
-          <!-- Populated by battle.js -->
-        </div>
-
-        <div class="flex justify-between items-center">
-          <button id="btn-battle-quit"
-                  class="pixel-btn-secondary px-6 py-2 font-pixel text-red-300 text-[8px] tracking-widest cursor-pointer active:scale-95 transition-all select-none"
-                  aria-label="Quit battle and return to map">
-            <svg class="w-3.5 h-3.5 fill-current inline-block align-middle mr-1.5 text-red-300" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M4 2h2v20H4V2zm2 2h14v10H6V4zm2 2v2h4V6H8zm6 0v2h4V6h-4zm-6 4v2h4v-2H8zm6 0v2h4v-2h-4z"/></svg>RUN
-          </button>
-          <button id="btn-battle-submit"
-                  class="pixel-btn px-8 py-2 font-pixel text-gold text-[8px] tracking-widest opacity-40"
-                  disabled
-                  aria-label="Submit selected answer">
-            SUBMIT <svg class="w-3 h-3 fill-current inline-block align-middle ml-1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M10 6h-2v12h2v-2h2v-2h2v-2h-2V8h-2V6z"/></svg>
-          </button>
-        </div>
+        <!-- Column 3: ENEMY INFO BOX -->
+        <aside class="battle-info-panel-restructured flex flex-col justify-between p-3 glass-panel border-2 border-red-500/36 col-span-3 select-none bg-[#090d1f]">
+          <div class="battle-panel-title text-red-400">ENEMY INFO BOX</div>
+          <div class="flex-1 flex flex-col gap-1.5 justify-start">
+            <div id="battle-enemy-card-name" class="battle-name-main battle-name-enemy">BIT MITE</div>
+            <div id="battle-enemy-role" class="battle-role-line">Glitchborn Byte</div>
+          </div>
+          <div class="border-t border-white/10 pt-3 mt-auto w-full">
+            <p id="battle-enemy-desc" class="battle-panel-copy mt-1 max-h-24 overflow-y-auto pr-1 scrollbar-thin text-white"></p>
+          </div>
+        </aside>
 
       </div>
     </div>
