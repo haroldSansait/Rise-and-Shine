@@ -57,6 +57,20 @@
        aria-hidden="true">
   </div>
 
+  <!-- ── Global Beta Version Badge (always visible across all screens) ── -->
+  <div id="global-version-badge"
+       class="fixed bottom-3 right-4 z-[9998] pointer-events-none select-none flex items-center gap-1.5"
+       aria-label="Game version">
+    <span class="font-pixel text-[6px] tracking-widest"
+          style="color: rgba(249,193,89,0.55); text-shadow: 0 0 8px rgba(249,193,89,0.3);">
+      Rise and Shine
+    </span>
+    <span class="font-pixel text-[6px] px-1.5 py-0.5 rounded"
+          style="background: rgba(34,211,238,0.12); border: 1px solid rgba(34,211,238,0.3); color: rgba(34,211,238,0.7); letter-spacing: 0.1em; text-shadow: 0 0 6px rgba(34,211,238,0.4);">
+      BETA 0.1.1
+    </span>
+  </div>
+
   <!-- ════════════════════════════════════════════
        SCREEN 0: PRELOADER & central asset loading
        ═════════════════════════════════════════════ -->
@@ -162,8 +176,8 @@
       </p>
 
       <!-- Version tag -->
-      <div class="absolute bottom-5 right-6 font-pixel text-white/20 text-[7px] tracking-widest">
-        PRELIM ARC v1.0
+      <div class="absolute bottom-5 right-6 font-pixel text-white/25 text-[7px] tracking-widest">
+        Rise and Shine — Beta 0.1.1
       </div>
     </div>
   </section>
@@ -270,6 +284,18 @@
           <div id="char-desc-display"
                class="font-ui text-white/40 text-xs mt-1 leading-relaxed">
           </div>
+          <!-- Passive Ability Block -->
+          <div id="char-passive-block" class="border-t border-white/10 pt-3 mt-3 hidden">
+            <div class="font-pixel text-[8px] text-purple-300 mb-1.5 tracking-wide">
+              ✦ UNIQUE PASSIVE
+            </div>
+            <div id="char-passive-name" class="font-pixel text-[9px] text-yellow-300 uppercase mb-1 drop-shadow-[0_0_4px_rgba(253,224,71,0.2)]">
+              Ability Name
+            </div>
+            <p id="char-passive-desc" class="font-ui text-white/75 text-xs leading-relaxed">
+              Ability description...
+            </p>
+          </div>
         </div>
 
         <div class="grid grid-cols-2 gap-5 mt-4">
@@ -286,7 +312,7 @@
           <!-- DMG -->
           <div class="stat-block">
             <div class="stat-label flex items-center gap-1.5">
-              <svg class="w-[14px] h-[14px] text-orange-500 fill-current inline-block align-middle" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 3h2v2h-2V3zm-2 2h2v2h-2V5zm-2 2h2v2h-2V7zm-2 2h2v2h-2V9zm-2 2h2v2h-2v-2zm-2 2h2v2h-2v-2zm-2 2h2v2H7v-2zM5 17h2v2H5v-2zm-2 2h2v2H3v-2zm0-2h2v2H3v-2zm2-2h2v2H5v-2zm2-2h2v2H7v-2zm8 8h2v2h-2v-2zm-2-2h2v2h-2v-2zm-2-2h2v2h-2v-2zm-2-2h2v2h-2v-2z"/></svg>DAMAGE
+              <svg class="w-[14px] h-[14px] text-orange-500 fill-current inline-block align-middle" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 3h2v2h-2V3zm-2 2h2v2h-2V5zm-2 2h2v2h-2V7zm-2 2h2v2h-2V9zm-2 2h2v2h-2v-2zm-2 2h2v2h-2v-2zm-2 2h2v2H7v-2zM5 17h2v2H5v-2zm-2 2h2v2H3v-2zm0-2h2v2H3v-2zm2-2h2v2H5v-2zm2-2h2v2H7v-2zm8 8h2v2h-2v-2zm-2-2h2v2h-2v-2zm-2-2h2v2h-2v-2zm-2-2h2v2h-2v-2z"/></svg>SYNC POWER
             </div>
             <div class="stat-bar mt-2">
               <div id="char-dmg-fill" class="stat-fill bg-red-400" style="width:0%"></div>
@@ -393,7 +419,7 @@
         <div class="grid grid-cols-2 gap-5 mb-4">
           <div class="stat-block">
             <div class="stat-label flex items-center gap-1.5">
-              <svg class="w-[14px] h-[14px] text-red-500 fill-current inline-block align-middle" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M2 5v5h2v2h2v2h2v2h2v2h4v-2h2v-2h2v-2h2v-2h2V5h-4v2h-2V5h-8v2H8V5H2zm2 2h2v2H4V7zm4 0h2v2H8V7zm6 2h-2V7h2v2zm4-2h2v2h-2V7z"/></svg>HEALTH
+              <svg class="w-[14px] h-[14px] text-red-500 fill-current inline-block align-middle" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M2 5v5h2v2h2v2h2v2h2v2h4v-2h2v-2h2v-2h2v-2h2V5h-4v2h-2V5h-8v2H8V5H2zm2 2h2v2H4V7zm4 0h2v2H8V7zm6 2h-2V7h2v2zm4-2h2v2h-2V7z"/></svg>HP FUSION
             </div>
             <div class="stat-bar mt-2">
               <div id="byte-hp-fill" class="stat-fill bg-green-400" style="width:0%"></div>
@@ -576,6 +602,35 @@
       </div>
     </div>
   </div>
+
+  <!-- Retry Confirmation Overlay for Cleared Levels -->
+  <div id="map-retry-confirm-overlay" 
+       class="hidden absolute inset-0 bg-black/85 z-[99] flex flex-col items-center justify-center p-6 text-center select-none"
+       style="image-rendering: pixelated;">
+    <div class="relative glass-panel max-w-sm w-full p-6 border-2 border-gold/45 shadow-[0_0_40px_rgba(249,193,89,0.18)]">
+      <div class="font-pixel text-[9px] text-cyan-400 tracking-widest mb-4">
+        <svg class="w-4 h-4 fill-current inline-block align-middle mr-1 text-cyan-400" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+        RETRY COMPLETED ZONE
+        <svg class="w-4 h-4 fill-current inline-block align-middle ml-1 text-cyan-400" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+      </div>
+      <p class="font-ui text-white text-sm font-semibold mb-6 max-w-xs leading-relaxed">
+        YOU HAVE ALREADY COMPLETED THIS ZONE.<br><br>
+        <span class="text-white/60 text-xs">NO NEW REWARDS WILL BE GRANTED, AND COMBAT HP CHANGES WILL PERSIST.<br>DO YOU WANT TO PROCEED?</span>
+      </p>
+      <div class="flex gap-4 justify-center">
+        <button id="map-retry-confirm-yes" 
+                class="pixel-btn px-6 py-2.5 font-pixel text-cyan-300 text-[8px] tracking-wider cursor-pointer active:scale-95 transition-all select-none"
+                aria-label="Confirm retry completed level">
+          RETRY <svg class="w-3 h-3 fill-current inline-block align-middle ml-1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M10 6h-2v12h2v-2h2v-2h2v-2h-2V8h-2V6z"/></svg>
+        </button>
+        <button id="map-retry-confirm-no" 
+                class="pixel-btn-secondary px-6 py-2.5 font-pixel text-white text-[8px] tracking-wider cursor-pointer active:scale-95 transition-all select-none"
+                aria-label="Cancel retry completed level">
+          CANCEL
+        </button>
+      </div>
+    </div>
+  </div>
   </section>
 
   <!-- ════════════════════════════════════════════
@@ -629,7 +684,12 @@
         </div>
         <div id="cutscene-text"
              class="font-ui text-white text-base leading-relaxed min-h-[72px]"></div>
-        <div class="flex justify-end mt-3">
+        <div class="flex justify-end gap-3 mt-3">
+          <button id="btn-cutscene-skip"
+                  class="pixel-btn-secondary px-5 py-2 font-pixel text-white/50 text-[8px] tracking-widest hover:text-white transition-all cursor-pointer active:scale-95"
+                  aria-label="Skip dialogue cutscene">
+            SKIP
+          </button>
           <button id="btn-cutscene-next"
                   class="pixel-btn px-5 py-2 font-pixel text-gold text-[8px] tracking-widest"
                   aria-label="Next dialogue line">
@@ -715,15 +775,85 @@
 
     <!-- Tutorial callout overlay -->
     <div id="battle-tutorial-overlay"
-         class="hidden absolute inset-0 flex items-center justify-center bg-black/72"
-         style="z-index: 30;">
-      <div class="tutorial-callout-panel px-8 py-7 mx-8 max-w-lg text-center">
-        <p id="battle-tutorial-text" class="font-ui text-white text-base leading-relaxed mb-6"></p>
-        <button id="btn-tutorial-dismiss"
-                 class="pixel-btn px-10 py-3 font-pixel text-gold text-[8px] tracking-widest"
-                 aria-label="Dismiss tutorial">
-          GOT IT <svg class="w-3 h-3 fill-current inline-block align-middle ml-1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M10 6h-2v12h2v-2h2v-2h2v-2h-2V8h-2V6z"/></svg>
-        </button>
+         class="hidden absolute inset-0 flex items-center justify-center bg-black/80 z-40 select-none"
+         style="image-rendering: pixelated;">
+      <div class="relative glass-panel max-w-xl w-full p-7 border-2 border-gold/55 shadow-[0_0_60px_rgba(249,193,89,0.28)] text-center mx-4">
+        <!-- Slide counter -->
+        <div id="battle-tutorial-counter" class="font-pixel text-[7px] text-white/35 tracking-widest mb-2">1 / 8</div>
+        <div id="battle-tutorial-title" class="font-pixel text-[11px] text-gold tracking-widest mb-3 leading-relaxed">
+          ✦ TUTORIAL MODULE ✦
+        </div>
+        <!-- Dynamic byte skill badge (hidden on non-byte slides) -->
+        <div id="battle-tutorial-skill-badge" class="hidden mb-4 p-3 rounded-lg border border-cyan-500/40 bg-cyan-900/20">
+          <div id="battle-tutorial-skill-name" class="font-pixel text-[9px] text-cyan-300 tracking-wider mb-1"></div>
+          <p id="battle-tutorial-skill-effect" class="font-ui text-white/80 text-sm leading-relaxed"></p>
+        </div>
+        <!-- Dynamic hero passive badge (hidden on non-passive slides) -->
+        <div id="battle-tutorial-passive-badge" class="hidden mb-4 p-3 rounded-lg border border-purple-500/40 bg-purple-900/20">
+          <div id="battle-tutorial-passive-name" class="font-pixel text-[9px] text-purple-300 tracking-wider mb-1"></div>
+          <p id="battle-tutorial-passive-effect" class="font-ui text-white/80 text-sm leading-relaxed"></p>
+        </div>
+        <p id="battle-tutorial-text" class="font-ui text-white/90 text-base leading-relaxed mb-6 max-h-44 overflow-y-auto pr-1 scrollbar-thin"></p>
+        <div class="flex gap-4 justify-center">
+          <button id="btn-tutorial-skip"
+                   class="pixel-btn-secondary px-6 py-3 font-pixel text-white text-[8px] tracking-widest cursor-pointer active:scale-95 transition-all select-none"
+                   aria-label="Skip tutorial">
+            SKIP
+          </button>
+          <button id="btn-tutorial-dismiss"
+                   class="pixel-btn px-10 py-3 font-pixel text-gold text-[9px] tracking-widest cursor-pointer active:scale-95 transition-all select-none"
+                   aria-label="Next tutorial step">
+            NEXT <svg class="w-3.5 h-3.5 fill-current inline-block align-middle ml-1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M10 6h-2v12h2v-2h2v-2h2v-2h-2V8h-2V6z"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Byte Companion Intro Overlay (shown first time a byte is used) -->
+    <div id="byte-intro-overlay"
+         class="hidden absolute inset-0 flex items-center justify-center bg-black/85 z-40 select-none"
+         style="image-rendering: pixelated;">
+      <div class="relative glass-panel max-w-lg w-full mx-4 border-2 border-cyan-400/55 shadow-[0_0_60px_rgba(34,211,238,0.25)] flex flex-col" style="max-height: 90vh;">
+        <!-- Glowing top accent bar -->
+        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-500 via-blue-400 to-purple-500"></div>
+
+        <div class="p-7 text-center overflow-y-auto flex-1" style="max-height: 88vh;">
+          <!-- "NEW COMPANION" header -->
+          <div class="font-pixel text-[7px] text-cyan-400 tracking-[0.25em] mb-3 animate-pulse">
+            ✦ NEW BYTE COMPANION ✦
+          </div>
+
+          <!-- Byte sprite placeholder / emoji icon -->
+          <div id="byte-intro-icon" class="text-5xl mb-3 drop-shadow-[0_0_12px_rgba(34,211,238,0.6)]">⚡</div>
+          <!-- Byte profile image (shown when image is available) -->
+          <img id="byte-intro-img"
+               src="" alt="Byte companion"
+               class="hidden w-24 h-24 object-cover rounded-full mx-auto mb-3 border-4 shadow-[0_0_20px_rgba(34,211,238,0.4)]"
+               onerror="this.classList.add('hidden'); document.getElementById('byte-intro-icon').classList.remove('hidden');">
+
+          <!-- Byte name -->
+          <div id="byte-intro-name" class="font-pixel text-[13px] text-white tracking-wider mb-1"></div>
+          <!-- Byte role -->
+          <div id="byte-intro-role" class="font-ui text-cyan-300/75 text-sm mb-5"></div>
+
+          <!-- Skill card -->
+          <div class="mb-5 p-4 rounded-xl border border-cyan-500/45 bg-cyan-950/40 text-left relative">
+            <div class="font-pixel text-[7.5px] text-cyan-400 tracking-widest mb-2">⚡ ACTIVE SKILL</div>
+            <div id="byte-intro-skill-name" class="font-pixel text-[10px] text-yellow-300 mb-2 uppercase"></div>
+            <p id="byte-intro-skill-effect" class="font-ui text-white/85 text-sm leading-relaxed"></p>
+            <div id="byte-intro-charge-line" class="mt-3 font-pixel text-[7px] text-purple-300 tracking-wide"></div>
+          </div>
+
+          <!-- Passive / role description -->
+          <p id="byte-intro-role-desc" class="font-ui text-white/65 text-sm leading-relaxed mb-6"></p>
+
+          <!-- GOT IT button -->
+          <button id="btn-byte-intro-dismiss"
+                  class="pixel-btn px-10 py-3 font-pixel text-cyan-300 text-[9px] tracking-widest cursor-pointer active:scale-95 transition-all select-none shadow-[0_0_20px_rgba(34,211,238,0.3)]"
+                  aria-label="Dismiss byte companion introduction">
+            GOT IT! <svg class="w-3.5 h-3.5 fill-current inline-block align-middle ml-1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M10 6h-2v12h2v-2h2v-2h2v-2h-2V8h-2V6z"/></svg>
+          </button>
+        </div>
       </div>
     </div>
 
@@ -767,7 +897,7 @@
     </div>
 
     <!-- Main Battle Widescreen Arena -->
-    <div class="absolute top-[72px] bottom-[260px] left-0 right-0 overflow-visible z-10 flex items-center">
+    <div class="absolute top-[72px] bottom-[300px] left-0 right-0 overflow-visible z-10 flex items-center">
       <div class="w-full max-w-[1240px] mx-auto h-full relative overflow-visible">
         <div class="battle-stage-arena h-full w-full relative overflow-visible">
           
@@ -826,33 +956,66 @@
     </div>
 
     <!-- Solid Lower Deck Enclosure (100% Viewport Width) -->
-    <div class="battle-bottom-deck absolute bottom-0 left-0 right-0 bg-[#060814] z-20 flex items-center py-2 border-t-2 border-white/10" style="height: 260px;">
+    <div class="battle-bottom-deck absolute bottom-0 left-0 right-0 bg-[#060814] z-20 flex items-center py-2 border-t-2 border-white/10" style="min-height: 300px;">
       <!-- Constrained three-column row inside -->
-      <div class="battle-bottom-row w-full grid grid-cols-12 gap-2.5 h-full items-stretch px-12">
+      <div class="battle-bottom-row w-full grid grid-cols-12 gap-2.5 items-stretch px-12">
         
         <!-- Column 1: ALLY INFO PANEL -->
         <aside class="battle-info-panel-restructured flex flex-col justify-between p-3 glass-panel border-2 border-gold/32 col-span-3 select-none bg-[#090d1f]">
           <div class="battle-panel-title">ALLY INFO PANEL</div>
-          <div class="flex-1 flex flex-col gap-1.5 justify-start">
-            <div id="battle-player-card-name" class="battle-name-main"></div>
-            <div id="battle-player-role" class="battle-role-line">Hero</div>
+          <div class="flex flex-col gap-1 justify-start mb-1">
+            <div id="battle-player-card-name" class="battle-name-main text-gold font-bold"></div>
+            <div id="battle-player-role" class="battle-role-line text-white/70">Hero</div>
+            <!-- Player Stats Overview inside Info Panel -->
+            <div class="flex gap-3 mt-1 border-t border-white/10 pt-1.5">
+              <span id="battle-player-stat-hp" class="font-ui font-bold text-[12px] text-green-400">❤ Max HP: --</span>
+              <span id="battle-player-stat-sync" class="font-ui font-bold text-[12px] text-orange-400">⚡ Sync: --</span>
+            </div>
+            <!-- Character Passive Display inside Info Panel -->
+            <div id="battle-player-passive-box" class="mt-1 border-t border-white/10 pt-1.5">
+              <div class="font-pixel text-[7.5px] text-purple-300 tracking-wider mb-0.5">✦ ACTIVE PASSIVE</div>
+              <div id="battle-player-passive-name" class="font-pixel text-[9px] text-yellow-300 mt-0.5 uppercase leading-snug">PASSIVE NAME</div>
+              <p id="battle-player-passive-desc" class="font-ui text-[12px] text-white/85 leading-snug mt-1"></p>
+            </div>
           </div>
-          <div class="border-t border-white/10 pt-3 flex flex-col gap-1 mt-auto">
-            <div class="flex items-center justify-between gap-2 mb-1.5">
+          <div class="border-t border-white/15 pt-2 flex flex-col gap-1 mt-auto">
+            <div class="flex items-center justify-between gap-2 mb-0.5">
               <div id="battle-byte-card-name" class="battle-name-byte mb-0" style="margin-bottom: 0;"></div>
               <div id="wrapper-byte-skill" class="battle-skill-slot mt-0 flex-shrink-0 w-24" style="margin-top: 0;"></div>
             </div>
-            <div id="battle-byte-ability" class="battle-ability-name">Byte Ability</div>
-            <p id="battle-byte-desc" class="battle-panel-copy mt-1 max-h-12 overflow-y-auto pr-1 scrollbar-thin text-white"></p>
+            <div id="battle-byte-ability" class="battle-ability-name text-cyan-400">Byte Ability</div>
+            <p id="battle-byte-desc" class="battle-panel-copy mt-0.5 text-white/85"></p>
           </div>
         </aside>
 
         <!-- Column 2: Question and MCQ panel (Solid Opaque, High Contrast, No Blur) -->
-        <div class="battle-question-panel-restructured col-span-6 flex flex-col justify-between px-4 py-2.5 bg-[#090d1f] border-2 border-gold/32 rounded-lg shadow-2xl">
+        <div class="battle-question-panel-restructured relative col-span-6 flex flex-col justify-between px-4 py-2.5 bg-[#090d1f] border-2 border-gold/32 rounded-lg shadow-2xl">
           
+          <!-- Pause overlay for Column 2 (covers only the middle question/answers panel) -->
+          <div id="battle-pause-overlay" 
+               class="hidden absolute inset-0 z-30 bg-black/95 flex flex-col items-center justify-center p-4 text-center select-none rounded-lg"
+               style="image-rendering: pixelated; border: 2px solid rgba(249, 193, 89, 0.45);">
+            <div class="font-pixel text-[9px] text-yellow-400 tracking-widest mb-3 animate-pulse">
+              ✦ GAME PAUSED ✦
+            </div>
+            <p class="font-ui text-white/70 text-xs mb-4 max-w-xs leading-relaxed">
+              THE QUESTIONS AND ANSWERS ARE HIDDEN WHILE PAUSED TO MAINTAIN BATTLE INTEGRITY.
+            </p>
+            <button id="btn-battle-resume" 
+                    class="pixel-btn px-6 py-2.5 font-pixel text-gold text-[8px] tracking-widest cursor-pointer active:scale-95 transition-all select-none shadow-[0_0_15px_rgba(249,193,89,0.3)]"
+                    aria-label="Resume battle">
+              RESUME <svg class="w-3 h-3 fill-current inline-block align-middle ml-1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M10 6h-2v12h2v-2h2v-2h2v-2h-2V8h-2V6z"/></svg>
+            </button>
+          </div>
+
           <div class="flex items-center justify-between mb-2">
-            <span id="battle-q-num" class="font-pixel text-gold text-[9px] font-bold">Q 1 / 10</span>
+            <span id="battle-q-num" class="font-pixel text-gold text-[9px] font-bold">BATTLE QUESTION</span>
             <span id="battle-result-line" class="font-ui text-sm font-bold text-white"></span>
+          </div>
+
+          <!-- Question Timer Bar -->
+          <div id="battle-timer-container" class="w-full h-1.5 bg-black/40 border border-white/10 rounded-sm overflow-hidden mb-2.5 relative hidden">
+            <div id="battle-timer-bar" class="h-full bg-gradient-to-r from-red-500 via-orange-400 to-yellow-300 w-full transition-all duration-100 ease-linear shadow-[0_0_8px_rgba(234,179,8,0.4)]" style="width: 100%;"></div>
           </div>
 
           <p id="battle-question" class="font-ui text-white text-sm font-semibold leading-snug mb-3"></p>
@@ -870,6 +1033,23 @@
                 <svg class="w-3.5 h-3.5 fill-current text-red-300 inline-block align-middle" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M4 2h2v20H4V2zm2 2h14v10H6V4zm2 2v2h4V6H8zm6 0v2h4V6h-4zm-6 4v2h4v-2H8zm6 0v2h4v-2h-4z"/></svg> RUN
               </button>
             </div>
+
+            <div id="wrapper-battle-pause" class="inline-block relative">
+              <button id="btn-battle-pause"
+                      class="pixel-btn-secondary px-6 py-2 font-pixel text-yellow-300 text-[8px] tracking-widest cursor-pointer active:scale-95 transition-all select-none flex items-center gap-1.5 border-yellow-500/30 hover:border-yellow-500/60"
+                      aria-label="Pause battle">
+                <svg class="w-3.5 h-3.5 fill-current text-yellow-300 inline-block align-middle" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg> PAUSE
+              </button>
+            </div>
+            
+            <div id="wrapper-battle-reveal" class="inline-block relative">
+              <button id="btn-battle-reveal"
+                      class="pixel-btn-secondary px-6 py-2 font-pixel text-cyan-300 text-[8px] tracking-widest cursor-pointer active:scale-95 transition-all select-none flex items-center gap-1.5 border-cyan-500/30 hover:border-cyan-500/60"
+                      aria-label="Reveal correct answer">
+                <svg class="w-3.5 h-3.5 fill-current text-cyan-300 inline-block align-middle" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg> REVEAL (2/2)
+              </button>
+            </div>
+
             <div id="wrapper-battle-submit" class="inline-block relative">
               <button id="btn-battle-submit"
                       class="pixel-btn px-8 py-2 font-pixel text-gold text-[8px] tracking-widest opacity-40 flex items-center gap-1.5"
@@ -885,12 +1065,12 @@
         <!-- Column 3: ENEMY INFO BOX -->
         <aside class="battle-info-panel-restructured flex flex-col justify-between p-3 glass-panel border-2 border-red-500/36 col-span-3 select-none bg-[#090d1f]">
           <div class="battle-panel-title text-red-400">ENEMY INFO BOX</div>
-          <div class="flex-1 flex flex-col gap-1.5 justify-start">
+          <div class="flex-1 flex flex-col gap-1 justify-start mb-1">
             <div id="battle-enemy-card-name" class="battle-name-main battle-name-enemy">BIT MITE</div>
-            <div id="battle-enemy-role" class="battle-role-line">Glitchborn Byte</div>
+            <div id="battle-enemy-role" class="battle-role-line text-white/70">Glitchborn Byte</div>
           </div>
-          <div class="border-t border-white/10 pt-3 mt-auto w-full">
-            <p id="battle-enemy-desc" class="battle-panel-copy mt-1 max-h-24 overflow-y-auto pr-1 scrollbar-thin text-white"></p>
+          <div class="border-t border-white/15 pt-2 mt-auto w-full">
+            <p id="battle-enemy-desc" class="battle-panel-copy mt-1 max-h-20 overflow-y-auto pr-1 scrollbar-thin text-white/85"></p>
           </div>
         </aside>
 
@@ -925,6 +1105,8 @@
         </div>
       </div>
     </div>
+
+
 
   </section>
 

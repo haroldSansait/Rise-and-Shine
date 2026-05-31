@@ -21,15 +21,27 @@ window.MainMenuScreen = (() => {
       gsap.to(btnStart, { scale: 1, duration: 0.18, ease: 'power2.in' });
     });
 
-    // ── Click: go to intro video ─────────────────────────
+    // ── Click: start game (redirect to map if returning player) ─
     btnStart.addEventListener('click', () => {
       AudioManager.playClickSFX();
       gsap.to(btnStart, {
         scale: 0.94, duration: 0.08, yoyo: true, repeat: 1,
         onComplete: () => {
-          window.ScreenManager.goTo('intro', {
-            onEnter: () => IntroVideoScreen.play()
-          });
+          const saveData = SaveSystem.load();
+          if (saveData.characterId) {
+            // Returning player: Jump straight to the map screen
+            window.ScreenManager.goTo('prelim-map', {
+              onEnter: () => {
+                SaveSystem.applyToGameState();
+                PrelimMapScreen.enter();
+              }
+            });
+          } else {
+            // First-time player: Play intro and character/byte selection
+            window.ScreenManager.goTo('intro', {
+              onEnter: () => IntroVideoScreen.play()
+            });
+          }
         }
       });
     });

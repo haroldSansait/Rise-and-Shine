@@ -13,10 +13,13 @@ window.SaveSystem = (() => {
       characterId:        null,
       byteId:             'poturtle',
       unlockedBytes:      ['poturtle', 'firewisp', 'lagoon'],
+      introducedBytes:    [],   // byte IDs whose intro popup has been shown
       playerHp:           null,
       playerMaxHp:        null,
       byteCharge:         0,
       prelimProgress:     0,    // highest level cleared (0 = none)
+      revealsLeft:        2,    // limit of 2 reveals for the entire Prelim Arc!
+      tutorialCompleted:  false, // Level 1 walkthrough tutorial completion flag
       levelLocks: {
         1: false,
         2: true,
@@ -44,6 +47,9 @@ window.SaveSystem = (() => {
       // Keep starter bytes available even if an older/corrupt save omits them.
       const unlocked = Array.isArray(parsed.unlockedBytes) ? parsed.unlockedBytes : defaultUnlockedBytes;
       data.unlockedBytes = Array.from(new Set([...defaultUnlockedBytes, ...unlocked]));
+
+      // Merge introducedBytes (array of byte IDs whose intro has been shown)
+      data.introducedBytes = Array.isArray(parsed.introducedBytes) ? parsed.introducedBytes : [];
 
       if (!data.unlockedBytes.includes(data.byteId)) {
         data.byteId = data.unlockedBytes[0] ?? 'poturtle';
@@ -141,11 +147,46 @@ window.SaveSystem = (() => {
   function saveCharacter(charId, baseHp) {
     const data = load();
     data.characterId = charId;
-    if (data.playerMaxHp === null) {
-      data.playerMaxHp = baseHp;
-      data.playerHp    = baseHp;
-    }
+    data.playerMaxHp = null;
+    data.playerHp    = null;
+    data.revealsLeft = 2; // Reset reveals for a fresh run
     save(data);
+  }
+
+  /** Persist the remaining reveals. */
+  function saveReveals(count) {
+    const data = load();
+    data.revealsLeft = Math.max(0, count ?? 0);
+    save(data);
+  }
+
+  /** Mark a byte companion as introduced (so its intro popup never shows again). */
+  function markByteIntroduced(byteId) {
+    const data = load();
+    if (!Array.isArray(data.introducedBytes)) data.introducedBytes = [];
+    if (!data.introducedBytes.includes(byteId)) {
+      data.introducedBytes.push(byteId);
+      save(data);
+    }
+  }
+
+  /** Check if a byte companion has already been introduced. */
+  function isByteIntroduced(byteId) {
+    const data = load();
+    return Array.isArray(data.introducedBytes) && data.introducedBytes.includes(byteId);
+  }
+
+  /** Mark the Level 1 tutorial as completed. */
+  function markTutorialCompleted() {
+    const data = load();
+    data.tutorialCompleted = true;
+    save(data);
+  }
+
+  /** Check if the Level 1 tutorial has been completed. */
+  function isTutorialCompleted() {
+    const data = load();
+    return data.tutorialCompleted === true;
   }
 
   /**
@@ -169,9 +210,12 @@ window.SaveSystem = (() => {
     }
 
     // HP carryover
-    if (data.playerHp !== null) GS.playerHp    = data.playerHp;
-    if (data.playerMaxHp !== null) GS.playerMaxHp = data.playerMaxHp;
+    GS.playerHp    = data.playerHp;
+    GS.playerMaxHp = data.playerMaxHp;
     GS.byteCharge = Math.max(0, data.byteCharge ?? 0);
+
+    // Reveals carryover
+    GS.revealsLeft = (data.revealsLeft !== undefined) ? data.revealsLeft : 2;
 
     // Level locks — apply to the live data
     GD.prelimLevels.forEach(lvl => {
@@ -191,6 +235,11 @@ window.SaveSystem = (() => {
     savePlayerHp,
     saveByteCharge,
     saveCharacter,
+    saveReveals,
+    markByteIntroduced,
+    isByteIntroduced,
+    markTutorialCompleted,
+    isTutorialCompleted,
     applyToGameState,
   };
 

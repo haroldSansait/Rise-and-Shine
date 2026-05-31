@@ -173,6 +173,7 @@ window.SettingsScreen = (() => {
         window.GameState.playerMaxHp = null;
         window.GameState.byteCharge = 0;
         window.GameState.currentLevel = null;
+        window.GameState.revealsLeft = 2;
 
         // Gracefully reload the application environment to drop player cleanly back
         setTimeout(() => {

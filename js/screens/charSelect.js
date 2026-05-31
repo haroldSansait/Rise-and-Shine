@@ -195,6 +195,21 @@ window.CharSelectScreen = (() => {
 
     document.getElementById('char-desc-display').textContent = char.roleDesc;
 
+    // Update passive block details
+    const passiveBlock = document.getElementById('char-passive-block');
+    const passiveName = document.getElementById('char-passive-name');
+    const passiveDesc = document.getElementById('char-passive-desc');
+    if (passiveBlock && passiveName && passiveDesc) {
+      if (char.passiveName && char.passiveDesc) {
+        passiveBlock.classList.remove('hidden');
+        passiveName.textContent = char.passiveName;
+        passiveDesc.textContent = char.passiveDesc;
+        passiveName.style.color = theme.color;
+      } else {
+        passiveBlock.classList.add('hidden');
+      }
+    }
+
     const hpPct  = (char.hp  / MAX_HP)  * 100;
     const dmgPct = (char.dmg / MAX_DMG) * 100;
 

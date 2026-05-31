@@ -221,9 +221,21 @@ window.CutsceneScreen = (() => {
     _showLine(0);
   }
 
+  function _skipCutscene() {
+    clearTimeout(_typingTimer);
+    _isTyping = false;
+    AudioManager.playConfirmSFX();
+    if (typeof _onComplete === 'function') _onComplete();
+  }
+
   function init() {
     document.getElementById('btn-cutscene-next')
       .addEventListener('click', _advance);
+
+    const skipBtn = document.getElementById('btn-cutscene-skip');
+    if (skipBtn) {
+      skipBtn.addEventListener('click', _skipCutscene);
+    }
 
     document.addEventListener('keydown', (e) => {
       if (window.ScreenManager.currentScreen !== 'cutscene') return;

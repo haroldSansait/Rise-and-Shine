@@ -10,6 +10,7 @@ window.GameState = {
   playerMaxHp:  null,   // null = use character base HP; increases after boss clear
   byteCharge:   0,      // companion skill charge carries between battles
   currentLevel: null,   // set by prelimMap before entering battle
+  revealsLeft:  2,      // limit of 2 reveals for the entire Prelim Arc!
 };
 
 // ── Screen Manager ────────────────────────────────────────────

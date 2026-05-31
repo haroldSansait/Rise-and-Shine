@@ -105,7 +105,21 @@ window.PrelimMapScreen = (() => {
     if (enterBtn) {
       enterBtn.addEventListener('click', () => {
         AudioManager.playConfirmSFX();
-        launchLevel(level);
+        const progress = SaveSystem.load().prelimProgress;
+        if (progress >= level.id) {
+          const retryOverlay = document.getElementById('map-retry-confirm-overlay');
+          if (retryOverlay) {
+            retryOverlay.classList.remove('hidden');
+            gsap.fromTo(retryOverlay, { opacity: 0 }, { opacity: 1, duration: 0.25, ease: 'power2.out' });
+            
+            const innerCard = retryOverlay.querySelector('.glass-panel');
+            if (innerCard) {
+              gsap.fromTo(innerCard, { scale: 0.85, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3, ease: 'back.out(1.15)' });
+            }
+          }
+        } else {
+          launchLevel(level);
+        }
       });
     }
 
@@ -175,18 +189,26 @@ window.PrelimMapScreen = (() => {
       </div>
 
       <!-- Enemy info -->
-      <div class="glass-panel-sm mb-4 p-4">
-        <div class="flex items-start justify-between mb-2">
-          <div>
-            <div class="font-pixel text-xs text-red-400 mb-1">${isBoss ? `${icon('warning', 'w-4 h-4 inline-block align-middle fill-current text-red-500 mr-1')} STAGE BOSS` : 'ENEMY'}</div>
-            <div class="font-ui font-bold text-white text-base">${level.enemy}</div>
+      <div class="glass-panel-sm mb-4 p-4" style="border-color: rgba(239,68,68,0.35); background: rgba(30,0,0,0.45);">
+        <!-- ENEMY / BOSS label -->
+        <div class="font-pixel text-[7px] tracking-widest mb-2 ${isBoss ? 'text-red-400' : 'text-red-400/80'}">
+          ${isBoss ? `${icon('warning', 'w-3.5 h-3.5 inline-block align-middle fill-current text-red-500 mr-1')} ⚠ STAGE BOSS` : '⚔ ENEMY'}
+        </div>
+        <!-- Enemy name -->
+        <div class="font-ui font-extrabold text-white text-lg leading-tight mb-3">${level.enemy}</div>
+        <!-- Stat chips row -->
+        <div class="flex items-center gap-2 mb-3">
+          <div class="stat-chip stat-chip-hp flex-1 text-center">
+            ${icon('heart', 'w-3.5 h-3.5 inline-block align-middle fill-current text-red-400 mr-1')}
+            <span class="font-pixel text-[8px]">${level.enemyHp} HP</span>
           </div>
-          <div class="text-right">
-            <div class="stat-chip stat-chip-hp">${icon('heart', 'w-3.5 h-3.5 inline-block align-middle fill-current text-red-500 mr-1')} ${level.enemyHp} HP</div>
-            <div class="stat-chip stat-chip-dmg mt-1">${icon('sword', 'w-3.5 h-3.5 inline-block align-middle fill-current text-orange-500 mr-1')} ${level.enemyDmg} DMG</div>
+          <div class="stat-chip stat-chip-dmg flex-1 text-center">
+            ${icon('sword', 'w-3.5 h-3.5 inline-block align-middle fill-current text-orange-400 mr-1')}
+            <span class="font-pixel text-[8px]">${level.enemyDmg} DMG</span>
           </div>
         </div>
-        <p class="font-ui text-white/60 text-sm leading-relaxed">${level.enemyDesc}</p>
+        <!-- Enemy description -->
+        <p class="font-ui text-white/80 text-sm leading-relaxed">${level.enemyDesc}</p>
       </div>
 
       ${challengeItems ? `
@@ -221,20 +243,31 @@ window.PrelimMapScreen = (() => {
     // Persist the level data so battle.js and post-battle flows can access it
     window.GameState.currentLevel = level;
 
+    const isAlreadyCleared = SaveSystem.load().prelimProgress >= level.id;
+
+    if (isAlreadyCleared) {
+      // Bypass cutscene entirely and jump straight to the VS Banner
+      window.ScreenManager.goTo('vs-banner', {
+        onEnter: () => {
+          VSBannerScreen.enter(() => {
+            // Seamless transition completed
+          });
+        }
+      });
+      return;
+    }
+
     // Build intro cutscene lines
     let cutsceneLines;
 
     if (level.id === 1) {
-      // Level 1: Full Prelim Opening + L1 intro (hardcoded narrative)
+      // Level 1: Narrative Cutscene
       cutsceneLines = [
         { speaker: 'player', text: 'This was our classroom… but now it looks like a game level.' },
         { speaker: 'byte',   text: 'Byte! Byte!' },
-        { speaker: 'player', text: "You're saying we need to answer questions to fight?" },
-        { speaker: 'system', text: 'Battle rule initialized. Correct answer: Byte attack enabled. Wrong answer: enemy counterattack enabled.' },
-        { speaker: 'player', text: "So that's how this works." },
-        { speaker: 'system', text: 'Glitchborn Byte detected: Bit Mite.' },
-        { speaker: 'player', text: "A tiny enemy made of broken binary? Alright. First lesson: don't panic." },
+        { speaker: 'player', text: 'So that glitchy creature there is a Glitchborn Byte... Bit Mite.' },
         { speaker: 'byte',   text: 'Flux Core Bii!' },
+        { speaker: 'player', text: 'Let\'s purge this corruption. Bit Mite, here we come!' }
       ];
     } else {
       // Levels 2-5: use per-level intro lines from data.js
@@ -462,6 +495,38 @@ window.PrelimMapScreen = (() => {
       };
     }
 
+    // Retry Completed Level Confirmation Overlay handlers
+    const retryYes = document.getElementById('map-retry-confirm-yes');
+    const retryNo = document.getElementById('map-retry-confirm-no');
+    const retryOverlay = document.getElementById('map-retry-confirm-overlay');
+
+    if (retryYes && retryOverlay) {
+      retryYes.onclick = () => {
+        AudioManager.playConfirmSFX();
+        gsap.to(retryOverlay, {
+          opacity: 0,
+          duration: 0.15,
+          onComplete: () => {
+            retryOverlay.classList.add('hidden');
+            if (currentLevel) launchLevel(currentLevel);
+          }
+        });
+      };
+    }
+
+    if (retryNo && retryOverlay) {
+      retryNo.onclick = () => {
+        AudioManager.playBackSFX();
+        gsap.to(retryOverlay, {
+          opacity: 0,
+          duration: 0.15,
+          onComplete: () => {
+            retryOverlay.classList.add('hidden');
+          }
+        });
+      };
+    }
+
     // Show HUD
     updateHUD();
   }
@@ -476,8 +541,10 @@ window.PrelimMapScreen = (() => {
 
     // HP display: use carry-over if available
     const saveData   = SaveSystem.load();
-    const currentHp  = window.GameState.playerHp ?? char.hp;
-    const maxHp      = window.GameState.playerMaxHp ?? saveData.playerMaxHp ?? char.hp;
+    const baseHp     = char.hp;
+    const byteHp     = byte.hp;
+    const currentHp  = window.GameState.playerHp ?? (baseHp + byteHp);
+    const maxHp      = window.GameState.playerMaxHp ?? saveData.playerMaxHp ?? (baseHp + byteHp);
 
     hud.innerHTML = `
       <div class="flex items-center gap-3">
@@ -565,7 +632,7 @@ window.PrelimMapScreen = (() => {
         <!-- Stats -->
         <div class="grid grid-cols-2 gap-4 w-full mb-5 py-3 border-y border-white/5">
           <div class="stat-block text-left">
-            <div class="stat-label text-green-400">${icon('heart', 'w-3.5 h-3.5 inline-block align-middle fill-current text-red-500 mr-1')} HEALTH</div>
+            <div class="stat-label text-green-400">${icon('heart', 'w-3.5 h-3.5 inline-block align-middle fill-current text-red-500 mr-1')} HP FUSION</div>
             <div class="stat-value text-green-400 text-lg mt-1">${byte.hp}</div>
           </div>
           <div class="stat-block text-left">
@@ -669,7 +736,7 @@ window.PrelimMapScreen = (() => {
         ${isUnlocked ? `
         <div class="grid grid-cols-2 gap-4 w-full mb-5 py-3 border-y border-white/5">
           <div class="stat-block text-left">
-            <div class="stat-label text-green-400">${icon('heart', 'w-3.5 h-3.5 inline-block align-middle fill-current text-red-500 mr-1')} HEALTH</div>
+            <div class="stat-label text-green-400">${icon('heart', 'w-3.5 h-3.5 inline-block align-middle fill-current text-red-500 mr-1')} HP FUSION</div>
             <div class="stat-value text-green-400 text-base mt-0.5">${byte.hp}</div>
           </div>
           <div class="stat-block text-left">

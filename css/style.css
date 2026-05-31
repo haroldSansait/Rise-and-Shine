@@ -64,8 +64,8 @@ html, body {
   background: var(--rns-panel);
   border: 1px solid var(--rns-panel-border);
   border-radius: 12px;
-  backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
   box-shadow:
     0 8px 32px rgba(0,0,0,0.5),
     inset 0 1px 0 rgba(255,255,255,0.05);
@@ -156,6 +156,7 @@ html, body {
   align-items: center;
   justify-content: center;
   transition: all var(--transition-fast);
+  -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
   flex-shrink: 0;
 }
@@ -591,6 +592,7 @@ html, body {
 #map-sidebar {
   background: rgba(6, 8, 20, 0.97);
   border-left: 1px solid rgba(249,193,89,0.2);
+  -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
   z-index: 40;
 }
@@ -623,24 +625,29 @@ html, body {
 }
 
 .stat-chip {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   font-family: 'Press Start 2P', monospace;
-  font-size: 7px;
-  padding: 3px 8px;
-  border-radius: 4px;
+  font-size: 8px;
+  padding: 6px 10px;
+  border-radius: 6px;
   white-space: nowrap;
+  gap: 4px;
 }
 
 .stat-chip-hp {
-  background: rgba(34,197,94,0.12);
-  border: 1px solid rgba(34,197,94,0.3);
+  background: rgba(34,197,94,0.18);
+  border: 1.5px solid rgba(34,197,94,0.55);
   color: #4ade80;
+  box-shadow: 0 0 8px rgba(34,197,94,0.15);
 }
 
 .stat-chip-dmg {
-  background: rgba(239,68,68,0.12);
-  border: 1px solid rgba(239,68,68,0.3);
-  color: #f87171;
+  background: rgba(239,68,68,0.18);
+  border: 1.5px solid rgba(239,68,68,0.55);
+  color: #fca5a5;
+  box-shadow: 0 0 8px rgba(239,68,68,0.15);
 }
 
 /* ── Map Header panel ─────────────────────────────────────────── */
@@ -705,6 +712,7 @@ html, body {
   left: 0;
   top: 0;
   image-rendering: pixelated;
+  image-rendering: -webkit-optimize-contrast;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
   animation: spriteIdle steps(4) 0.9s infinite;
@@ -756,8 +764,8 @@ html, body {
   background: rgba(4, 6, 18, 0.94);
   border: 1px solid rgba(249,193,89,0.2);
   border-radius: 14px;
-  backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
 }
 
 /* ── Battle answer buttons ────────────────────────────────────── */
@@ -1035,8 +1043,8 @@ html, body {
 /* Prevent text selection on interactive elements */
 .pixel-btn, .pixel-btn-secondary, .carousel-arrow,
 .char-card, .byte-card, .map-node {
-  user-select: none;
   -webkit-user-select: none;
+  user-select: none;
 }
 
 /* ── Responsive tweaks ───────────────────────────────────────── */
@@ -1358,7 +1366,7 @@ html, body {
   bottom: 0;
   left: 0;
   right: 0;
-  height: 260px;
+  height: 300px;
   background-color: #060814 !important;
   border-top: 4px solid rgba(249,193,89,0.7) !important;
   box-shadow: 0 -12px 30px rgba(0, 0, 0, 0.85);
@@ -1379,7 +1387,8 @@ html, body {
 
 .battle-info-panel-restructured {
   min-height: 0;
-  padding: 12px 14px;
+  overflow: hidden;
+  padding: 8px 10px !important;
   background: #090d1f !important;
   border: 2px solid rgba(249, 193, 89, 0.32);
   border-radius: 8px;
@@ -1389,6 +1398,58 @@ html, body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+}
+
+/* Line-clamp: passive description — max 3 lines */
+#battle-player-passive-desc {
+  display: block !important;
+  overflow: visible !important;
+  word-break: break-word;
+  line-height: 1.35;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 12px;
+}
+
+/* Line-clamp: byte skill description — max 2 lines */
+#battle-byte-desc {
+  display: block !important;
+  overflow: visible !important;
+  word-break: break-word;
+  line-height: 1.35;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 11.5px !important;
+  max-height: none !important;
+}
+
+/* Text size overrides for the restructured bottom row info panels */
+.battle-info-panel-restructured .battle-panel-title {
+  margin-bottom: 6px !important;
+  font-size: 8.5px !important;
+  letter-spacing: 0.14em;
+}
+
+.battle-info-panel-restructured .battle-name-main,
+.battle-info-panel-restructured .battle-name-byte {
+  font-size: 12px !important;
+  line-height: 1.3 !important;
+}
+
+.battle-info-panel-restructured .battle-role-line {
+  font-size: 13px !important;
+  line-height: 1.3 !important;
+  color: rgba(255,255,255,0.72) !important;
+}
+
+.battle-info-panel-restructured .battle-ability-name {
+  font-size: 13px !important;
+  line-height: 1.3 !important;
+}
+
+.battle-info-panel-restructured .battle-panel-copy {
+  margin-top: 4px !important;
+  font-size: 11.5px !important;
+  line-height: 1.35 !important;
+  color: rgba(255,255,255,0.85) !important;
 }
 
 .battle-info-panel-restructured.border-red-500\/36 {
@@ -1621,6 +1682,24 @@ html, body {
 [data-tooltip]:hover::before {
   opacity: 1;
   transform: translate(-50%, 0) scale(1);
+}
+
+/* ── Glowing cyan style for revealed correct answers ── */
+.battle-answer-btn.revealed {
+  border-color: #06b6d4 !important; /* glowing cyan */
+  color: #cffafe !important;
+  box-shadow: 0 0 14px rgba(6, 182, 212, 0.55), inset 0 0 8px rgba(6, 182, 212, 0.25) !important;
+  animation: revealPulse 1.4s ease-in-out infinite;
+}
+
+@keyframes revealPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.025);
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.85), inset 0 0 12px rgba(6, 182, 212, 0.4) !important;
+  }
 }
 
 /* end of stylesheet */
