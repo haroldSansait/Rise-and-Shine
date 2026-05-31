@@ -184,12 +184,12 @@ window.BattleScreen = (() => {
 
     for (let i = 0; i < totalHearts; i++) {
       const heart = document.createElement('span');
-      heart.className = 'text-base select-none transition-all duration-300';
+      heart.className = 'inline-flex w-4 h-4 select-none transition-all duration-300';
       if (i < activeHearts) {
-        heart.textContent = '❤️';
+        heart.innerHTML = window.PixelIcons?.icon('heart', 'w-4 h-4 inline-block align-middle fill-current text-red-500') ?? '';
         heart.style.filter = 'drop-shadow(0 0 5px rgba(239, 68, 68, 0.75))';
       } else {
-        heart.textContent = '🖤';
+        heart.innerHTML = window.PixelIcons?.icon('heart', 'w-4 h-4 inline-block align-middle fill-current text-zinc-800') ?? '';
         heart.style.opacity = '0.35';
       }
       wrap.appendChild(heart);
@@ -497,9 +497,11 @@ window.BattleScreen = (() => {
       onComplete: () => {
         // Screen shake
         const screen = document.getElementById('screen-battle');
-        screen.classList.remove('battle-shaking');
-        void screen.offsetWidth;
-        screen.classList.add('battle-shaking');
+        if (screen && (!window.GameSettings || window.GameSettings.screenShake !== false)) {
+          screen.classList.remove('battle-shaking');
+          void screen.offsetWidth;
+          screen.classList.add('battle-shaking');
+        }
 
         // Red flash
         gsap.fromTo('#battle-damage-flash',
@@ -924,6 +926,9 @@ window.BattleScreen = (() => {
     _tutorialSeen = {};
     _selectedAns  = null;
 
+    const quitOverlay = document.getElementById('battle-quit-confirm-overlay');
+    if (quitOverlay) quitOverlay.classList.add('hidden');
+
     const char = window.GameState.character;
     const byte = window.GameState.byte;
 
@@ -1051,6 +1056,67 @@ window.BattleScreen = (() => {
       if (window.ScreenManager.currentScreen !== 'battle') return;
       if (e.code === 'Enter') _submit();
     });
+
+    // Flee / Quit Battle Logic
+    const quitBtn = document.getElementById('btn-battle-quit');
+    const quitOverlay = document.getElementById('battle-quit-confirm-overlay');
+    const quitYes = document.getElementById('battle-quit-confirm-yes');
+    const quitNo = document.getElementById('battle-quit-confirm-no');
+
+    if (quitBtn && quitOverlay) {
+      quitBtn.addEventListener('click', () => {
+        AudioManager.playClickSFX();
+        quitOverlay.classList.remove('hidden');
+        
+        // Fade in the dimmed background overlay
+        gsap.fromTo(quitOverlay, { opacity: 0 }, { opacity: 1, duration: 0.25, ease: 'power2.out' });
+        
+        // Scale in the inner card modal with a clean retro bounce
+        const innerCard = quitOverlay.querySelector('.glass-panel');
+        if (innerCard) {
+          gsap.fromTo(innerCard, { scale: 0.85, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3, ease: 'back.out(1.15)' });
+        }
+      });
+    }
+
+    if (quitNo && quitOverlay) {
+      quitNo.addEventListener('click', () => {
+        AudioManager.playBackSFX();
+        
+        // Fade out background overlay
+        gsap.to(quitOverlay, {
+          opacity: 0, duration: 0.2, ease: 'power2.out', onComplete: () => {
+            quitOverlay.classList.add('hidden');
+          }
+        });
+        
+        // Scale out the inner card modal
+        const innerCard = quitOverlay.querySelector('.glass-panel');
+        if (innerCard) {
+          gsap.to(innerCard, { scale: 0.85, opacity: 0, duration: 0.2, ease: 'power2.in' });
+        }
+      });
+    }
+
+    if (quitYes && quitOverlay) {
+      quitYes.addEventListener('click', () => {
+        AudioManager.playConfirmSFX();
+        // Hide confirmation
+        quitOverlay.classList.add('hidden');
+        
+        // Return to map screen cleanly
+        window.ScreenManager.goTo('prelim-map', {
+          onEnter: () => {
+            // Restore map BGM
+            AudioManager.playBGM('prelimMap', { volume: 0.55 });
+            // Re-render map HUD
+            if (window.PrelimMapScreen && typeof window.PrelimMapScreen.enter === 'function') {
+              window.PrelimMapScreen.enter();
+            }
+          }
+        });
+      });
+    }
   }
 
   return { init, enter };

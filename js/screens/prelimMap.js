@@ -5,6 +5,7 @@
 window.PrelimMapScreen = (() => {
 
   const levels = window.GAME_DATA.prelimLevels;
+  const icon = (name, className) => window.PixelIcons?.icon(name, className) ?? '';
   let sidebarOpen = false;
   let currentLevel = null;
 
@@ -24,7 +25,7 @@ window.PrelimMapScreen = (() => {
         <div class="map-node-body">
           <div class="map-node-ring"></div>
           ${level.locked
-            ? `<span class="map-node-lock">🔒</span>`
+            ? `<span class="map-node-lock">${icon('lock', 'w-4 h-4 inline-block align-middle fill-current text-zinc-500/80')}</span>`
             : `<span class="map-node-num">${level.id}</span>`
           }
         </div>
@@ -144,13 +145,13 @@ window.PrelimMapScreen = (() => {
     const isBoss = level.isBoss;
     const challengeItems = (level.challenges ?? []).map(c =>
       `<li class="sidebar-challenge-item">
-        <span class="text-gold mr-2">▸</span>${c}
+        <span class="text-gold mr-2">${icon('chevronRight', 'w-3 h-3 inline-block align-middle fill-current text-gold')}</span>${c}
       </li>`
     ).join('');
 
     const rewardItems = (level.rewards ?? []).map(r =>
       `<li class="sidebar-reward-item">
-        <span class="text-green-400 mr-2">✦</span>${r}
+        <span class="text-green-400 mr-2">${icon('crate', 'w-3 h-3 inline-block align-middle fill-current text-green-400')}</span>${r}
       </li>`
     ).join('');
 
@@ -158,7 +159,7 @@ window.PrelimMapScreen = (() => {
       <!-- Zone header -->
       <div class="mb-5">
         <div class="sidebar-level-badge ${isBoss ? 'sidebar-level-badge-boss' : ''}">
-          ${isBoss ? '⚠ BOSS LEVEL' : level.subtitle}
+          ${isBoss ? `${icon('warning', 'w-4 h-4 inline-block align-middle fill-current text-red-500 mr-1')} BOSS LEVEL` : level.subtitle}
         </div>
         <h2 class="font-pixel text-gold text-base mt-2 leading-relaxed">${level.name}</h2>
       </div>
@@ -177,12 +178,12 @@ window.PrelimMapScreen = (() => {
       <div class="glass-panel-sm mb-4 p-4">
         <div class="flex items-start justify-between mb-2">
           <div>
-            <div class="font-pixel text-xs text-red-400 mb-1">${isBoss ? '☠ STAGE BOSS' : '👾 ENEMY'}</div>
+            <div class="font-pixel text-xs text-red-400 mb-1">${isBoss ? `${icon('warning', 'w-4 h-4 inline-block align-middle fill-current text-red-500 mr-1')} STAGE BOSS` : 'ENEMY'}</div>
             <div class="font-ui font-bold text-white text-base">${level.enemy}</div>
           </div>
           <div class="text-right">
-            <div class="stat-chip stat-chip-hp">❤ ${level.enemyHp} HP</div>
-            <div class="stat-chip stat-chip-dmg mt-1">⚔ ${level.enemyDmg} DMG</div>
+            <div class="stat-chip stat-chip-hp">${icon('heart', 'w-3.5 h-3.5 inline-block align-middle fill-current text-red-500 mr-1')} ${level.enemyHp} HP</div>
+            <div class="stat-chip stat-chip-dmg mt-1">${icon('sword', 'w-3.5 h-3.5 inline-block align-middle fill-current text-orange-500 mr-1')} ${level.enemyDmg} DMG</div>
           </div>
         </div>
         <p class="font-ui text-white/60 text-sm leading-relaxed">${level.enemyDesc}</p>
@@ -191,7 +192,7 @@ window.PrelimMapScreen = (() => {
       ${challengeItems ? `
       <!-- Challenges -->
       <div class="mb-4">
-        <div class="font-pixel text-xs text-yellow-400 mb-2">⚡ CHALLENGES</div>
+        <div class="font-pixel text-xs text-yellow-400 mb-2">${icon('lightning', 'w-4 h-4 inline-block align-middle fill-current text-yellow-400 mr-1')} CHALLENGES</div>
         <ul class="space-y-2 font-ui text-white/80 text-sm">
           ${challengeItems}
         </ul>
@@ -201,7 +202,7 @@ window.PrelimMapScreen = (() => {
       ${rewardItems ? `
       <!-- Rewards -->
       <div class="mb-6">
-        <div class="font-pixel text-xs text-green-400 mb-2">★ CLEARANCE REWARDS</div>
+        <div class="font-pixel text-xs text-green-400 mb-2">${icon('crate', 'w-4 h-4 inline-block align-middle fill-current text-green-400 mr-1')} CLEARANCE REWARDS</div>
         <ul class="space-y-2 font-ui text-white/80 text-sm">
           ${rewardItems}
         </ul>
@@ -210,7 +211,7 @@ window.PrelimMapScreen = (() => {
 
       <!-- Action -->
       <button id="btn-sidebar-enter" class="pixel-btn w-full py-4 font-pixel text-gold text-xs tracking-widest">
-        ${isBoss ? '⚠ CHALLENGE BOSS' : '▶ ENTER ZONE'}
+        ${isBoss ? `${icon('warning', 'w-4 h-4 inline-block align-middle fill-current text-red-500 mr-1')} CHALLENGE BOSS` : `${icon('chevronRight', 'w-4 h-4 inline-block align-middle fill-current mr-1')} ENTER ZONE`}
       </button>
     `;
   }
@@ -290,8 +291,8 @@ window.PrelimMapScreen = (() => {
           <div class="font-pixel text-[8px] tracking-widest" style="color:${byte.color};">${byte.name}</div>
           <div class="font-ui text-white/50 text-xs mt-0.5">${byte.role}</div>
           <div class="byte-card-stats">
-            <span>❤ ${byte.hp}</span>
-            <span>⚔ ${byte.dmg}</span>
+            <span>${icon('heart', 'w-3 h-3 inline-block align-middle fill-current text-red-500 mr-1')} ${byte.hp}</span>
+            <span>${icon('sword', 'w-3 h-3 inline-block align-middle fill-current text-orange-500 mr-1')} ${byte.dmg}</span>
           </div>
           <div class="byte-card-skill font-pixel text-[7px] text-cyan-400 mt-2 truncate" title="${byte.skill}">
             ✦ ${byte.skill}
@@ -306,7 +307,7 @@ window.PrelimMapScreen = (() => {
         `;
       } else {
         card.innerHTML = `
-          <div class="byte-card-locked-icon">🔒</div>
+          <div class="byte-card-locked-icon">${icon('lock', 'w-6 h-6 inline-block align-middle fill-current text-zinc-500')}</div>
           <div class="byte-card-locked-name font-pixel text-[8px] text-white/25 tracking-widest">??? BYTE</div>
           <div class="font-ui text-white/25 text-xs mt-1">${byte.unlockHint}</div>
         `;
@@ -369,7 +370,7 @@ window.PrelimMapScreen = (() => {
           </button>
           <button id="btn-cancel-menu" class="pixel-btn px-8 py-3 font-pixel text-white/50 text-[8px] tracking-widest"
                   style="border-color:rgba(255,255,255,0.2);">
-            ✕ NO
+            ${icon('close', 'w-3 h-3 inline-block align-middle fill-current mr-1')} NO
           </button>
         </div>
       </div>
@@ -483,7 +484,11 @@ window.PrelimMapScreen = (() => {
         <img src="${char.image}" class="w-10 h-10 object-contain rounded border border-gold/30" alt="${char.name}">
         <div>
           <div class="font-pixel text-gold text-xs">${char.name}</div>
-          <div class="font-ui text-white/60 text-xs">❤ ${currentHp}/${maxHp} &nbsp; ⚔ ${char.dmg}</div>
+          <div class="font-ui text-white/60 text-xs">
+            ${icon('heart', 'w-3 h-3 inline-block align-middle fill-current text-red-500 mr-1')} ${currentHp}/${maxHp}
+            &nbsp;
+            ${icon('sword', 'w-3 h-3 inline-block align-middle fill-current text-orange-500 mr-1')} ${char.dmg}
+          </div>
         </div>
       </div>
       <div class="flex items-center gap-3">
@@ -560,11 +565,11 @@ window.PrelimMapScreen = (() => {
         <!-- Stats -->
         <div class="grid grid-cols-2 gap-4 w-full mb-5 py-3 border-y border-white/5">
           <div class="stat-block text-left">
-            <div class="stat-label text-green-400">❤ HEALTH</div>
+            <div class="stat-label text-green-400">${icon('heart', 'w-3.5 h-3.5 inline-block align-middle fill-current text-red-500 mr-1')} HEALTH</div>
             <div class="stat-value text-green-400 text-lg mt-1">${byte.hp}</div>
           </div>
           <div class="stat-block text-left">
-            <div class="stat-label text-red-400">⚔ DAMAGE</div>
+            <div class="stat-label text-red-400">${icon('sword', 'w-3.5 h-3.5 inline-block align-middle fill-current text-orange-500 mr-1')} DAMAGE</div>
             <div class="stat-value text-red-400 text-lg mt-1">${byte.dmg}</div>
           </div>
         </div>
@@ -639,13 +644,13 @@ window.PrelimMapScreen = (() => {
                        font-pixel text-white/40 text-xs border border-white/10 rounded
                        hover:text-white hover:border-white/40 transition-all"
                 aria-label="Close details">
-          ✕
+          ${icon('close', 'w-3.5 h-3.5 inline-block align-middle fill-current')}
         </button>
 
         <!-- Byte Header -->
         <div class="flex flex-col items-center text-center mb-6">
           <div class="text-3xl mb-2" style="filter: drop-shadow(0 0 8px ${isUnlocked ? byte.color : 'transparent'});">
-            ${isUnlocked ? byte.icon : '🔒'}
+            ${isUnlocked ? byte.icon : icon('lock', 'w-7 h-7 inline-block align-middle fill-current text-zinc-500')}
           </div>
           <h2 class="font-pixel text-lg mb-1 tracking-wide" style="color: ${isUnlocked ? byte.color : '#94a3b8'}">
             ${isUnlocked ? byte.name.toUpperCase() : '??? BYTE'}
@@ -664,11 +669,11 @@ window.PrelimMapScreen = (() => {
         ${isUnlocked ? `
         <div class="grid grid-cols-2 gap-4 w-full mb-5 py-3 border-y border-white/5">
           <div class="stat-block text-left">
-            <div class="stat-label text-green-400">❤ HEALTH</div>
+            <div class="stat-label text-green-400">${icon('heart', 'w-3.5 h-3.5 inline-block align-middle fill-current text-red-500 mr-1')} HEALTH</div>
             <div class="stat-value text-green-400 text-base mt-0.5">${byte.hp}</div>
           </div>
           <div class="stat-block text-left">
-            <div class="stat-label text-red-400">⚔ DAMAGE</div>
+            <div class="stat-label text-red-400">${icon('sword', 'w-3.5 h-3.5 inline-block align-middle fill-current text-orange-500 mr-1')} DAMAGE</div>
             <div class="stat-value text-red-400 text-base mt-0.5">${byte.dmg}</div>
           </div>
         </div>
@@ -687,7 +692,7 @@ window.PrelimMapScreen = (() => {
 
           <!-- Backstory -->
           <div class="bg-white/5 border border-white/10 rounded-lg p-3">
-            <div class="font-pixel text-[7px] text-purple-400 mb-1.5 tracking-wide">📖 NARRATIVE DATABASE</div>
+            <div class="font-pixel text-[7px] text-purple-400 mb-1.5 tracking-wide">${icon('page', 'w-3.5 h-3.5 inline-block align-middle fill-current text-purple-400 mr-1')} NARRATIVE DATABASE</div>
             <p class="font-ui text-white/70 text-xs leading-relaxed italic">
               ${isUnlocked ? byte.backstory : `Encrypted database entry. ${byte.unlockHint}`}
             </p>

@@ -24,6 +24,40 @@ window.AudioManager = (() => {
   function getAudioCtx() {
     if (!audioCtx) {
       audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+      // INTERCEPT createGain to automatically scale all procedural SFX by sfxVolume!
+      const originalCreateGain = audioCtx.createGain;
+      audioCtx.createGain = function() {
+        const g = originalCreateGain.call(audioCtx);
+        
+        // Wrap scheduled gain envelope methods
+        const originalSet = g.gain.setValueAtTime;
+        g.gain.setValueAtTime = function(value, time) {
+          const sfxVol = (window.GameSettings && typeof window.GameSettings.sfxVolume === 'number') 
+            ? window.GameSettings.sfxVolume 
+            : 1.0;
+          originalSet.call(g.gain, value * sfxVol, time);
+        };
+
+        const originalRamp = g.gain.linearRampToValueAtTime;
+        g.gain.linearRampToValueAtTime = function(value, time) {
+          const sfxVol = (window.GameSettings && typeof window.GameSettings.sfxVolume === 'number') 
+            ? window.GameSettings.sfxVolume 
+            : 1.0;
+          originalRamp.call(g.gain, value * sfxVol, time);
+        };
+
+        const originalExp = g.gain.exponentialRampToValueAtTime;
+        g.gain.exponentialRampToValueAtTime = function(value, time) {
+          const sfxVol = (window.GameSettings && typeof window.GameSettings.sfxVolume === 'number') 
+            ? window.GameSettings.sfxVolume 
+            : 1.0;
+          const scaledVal = value * Math.max(0.0001, sfxVol);
+          originalExp.call(g.gain, scaledVal, time);
+        };
+
+        return g;
+      };
     }
     // Resume context if suspended (browser autoplay policy)
     if (audioCtx.state === 'suspended') audioCtx.resume();

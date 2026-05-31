@@ -78,6 +78,17 @@ window.CutsceneScreen = (() => {
     targetEl.textContent = '';
     _isTyping = true;
 
+    const speed = (window.GameSettings && typeof window.GameSettings.typewriterSpeed === 'number')
+      ? window.GameSettings.typewriterSpeed
+      : 28;
+
+    if (speed === 0) {
+      targetEl.textContent = fullText;
+      _isTyping = false;
+      onDone?.();
+      return;
+    }
+
     let i       = 0;
     let soundOn = true;   // boolean toggle bound to insertion
 
@@ -96,7 +107,7 @@ window.CutsceneScreen = (() => {
       soundOn = !soundOn;   // strict toggle
 
       i++;
-      _typingTimer = setTimeout(_insertChar, 28);
+      _typingTimer = setTimeout(_insertChar, speed);
     }
 
     _insertChar();

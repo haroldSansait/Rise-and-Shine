@@ -94,6 +94,7 @@ window.addEventListener('DOMContentLoaded', () => {
   VSBannerScreen.init();
   BattleScreen.init();
   PreloaderScreen.init();
+  SettingsScreen.init();
 
   // Boot: start on the preloader screen for centralized asset load tracking
   showFirstScreen();
