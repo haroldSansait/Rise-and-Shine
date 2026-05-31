@@ -1,0 +1,1511 @@
+/* ============================================================
+   Rise and Shine — Global Stylesheet
+   Retro RPG Dark Theme | Glassmorphism | Pixel Aesthetic
+   ============================================================ */
+
+/* ── Google Font import fallback (in case not in HTML) ───────── */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rajdhani:wght@400;500;600;700&display=swap');
+
+/* ── CSS Custom Properties ───────────────────────────────────── */
+:root {
+  --gold:          #F9C159;
+  --gold-dim:      #c99b3a;
+  --gold-glow:     rgba(249,193,89,0.35);
+  --rns-dark:      #080810;
+  --rns-navy:      #0d1521;
+  --rns-panel:     rgba(10, 14, 28, 0.82);
+  --rns-panel-border: rgba(249,193,89,0.18);
+  --rns-purple:    #180a2e;
+  --text-muted:    rgba(255,255,255,0.55);
+  --card-inactive: rgba(255,255,255,0.04);
+  --transition-fast: 0.18s ease;
+  --transition-med:  0.35s ease;
+}
+
+/* ── Base Reset ─────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--rns-dark);
+  font-family: 'Rajdhani', 'Segoe UI', sans-serif;
+  color: #fff;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Scanline Overlay ────────────────────────────────────────── */
+#scanlines {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 3px,
+    rgba(0,0,0,0.08) 3px,
+    rgba(0,0,0,0.08) 4px
+  );
+  z-index: 9999;
+  pointer-events: none;
+}
+
+/* ── Screen Base ─────────────────────────────────────────────── */
+.screen {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ── Glass Panel ─────────────────────────────────────────────── */
+.glass-panel {
+  background: var(--rns-panel);
+  border: 1px solid var(--rns-panel-border);
+  border-radius: 12px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow:
+    0 8px 32px rgba(0,0,0,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+.glass-panel-sm {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+}
+
+/* ── Pixel Button (primary) ──────────────────────────────────── */
+.pixel-btn {
+  position: relative;
+  display: inline-block;
+  background: transparent;
+  border: 2px solid var(--gold);
+  color: var(--gold);
+  font-family: 'Press Start 2P', monospace;
+  cursor: pointer;
+  letter-spacing: 0.08em;
+  transition: background var(--transition-fast), box-shadow var(--transition-fast), color var(--transition-fast);
+  outline: none;
+  clip-path: polygon(
+    0 4px, 4px 0,
+    calc(100% - 4px) 0, 100% 4px,
+    100% calc(100% - 4px), calc(100% - 4px) 100%,
+    4px 100%, 0 calc(100% - 4px)
+  );
+}
+
+.pixel-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--gold);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+  clip-path: inherit;
+}
+
+.pixel-btn:hover::before  { opacity: 0.12; }
+.pixel-btn:hover { box-shadow: 0 0 24px var(--gold-glow), 0 0 48px rgba(249,193,89,0.15); }
+.pixel-btn:active { transform: scale(0.97); }
+.pixel-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ── Pixel Button (secondary / back) ─────────────────────────── */
+.pixel-btn-secondary {
+  position: relative;
+  display: inline-block;
+  background: transparent;
+  border: 2px solid rgba(255,255,255,0.3);
+  color: rgba(255,255,255,0.7);
+  font-family: 'Press Start 2P', monospace;
+  cursor: pointer;
+  letter-spacing: 0.06em;
+  transition: all var(--transition-fast);
+  outline: none;
+  clip-path: polygon(
+    0 4px, 4px 0,
+    calc(100% - 4px) 0, 100% 4px,
+    100% calc(100% - 4px), calc(100% - 4px) 100%,
+    4px 100%, 0 calc(100% - 4px)
+  );
+}
+
+.pixel-btn-secondary:hover {
+  border-color: rgba(255,255,255,0.6);
+  color: #fff;
+  background: rgba(255,255,255,0.06);
+}
+
+/* ── Carousel Arrow Buttons ──────────────────────────────────── */
+.carousel-arrow {
+  width: 48px;
+  height: 48px;
+  border: 2px solid rgba(249,193,89,0.4);
+  background: rgba(0,0,0,0.5);
+  color: var(--gold);
+  font-size: 18px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+  backdrop-filter: blur(8px);
+  flex-shrink: 0;
+}
+
+.carousel-arrow:hover {
+  border-color: var(--gold);
+  background: rgba(249,193,89,0.12);
+  box-shadow: 0 0 16px var(--gold-glow);
+  transform: scale(1.1);
+}
+
+.carousel-arrow:active { transform: scale(0.95); }
+
+/* ── Character Cards ─────────────────────────────────────────── */
+#char-carousel-track {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  width: 100%;
+}
+
+.char-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+  width: 170px;
+  background: rgba(0, 0, 0, 0.4);
+  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
+              opacity 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
+              box-shadow 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
+              border-color 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
+              background 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  border: 2px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+.char-card-active {
+  opacity: 1;
+  transform: scale(1.1);
+  border-color: var(--gold);
+  box-shadow:
+    0 0 32px var(--gold-glow),
+    0 0 64px rgba(249, 193, 89, 0.15),
+    0 12px 40px rgba(0, 0, 0, 0.7);
+  background: rgba(249, 193, 89, 0.08);
+  z-index: 10;
+}
+
+.char-card-inactive {
+  opacity: 0.45;
+  transform: scale(0.85);
+  border-color: rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 1;
+  cursor: pointer;
+}
+
+.char-card-inactive:hover {
+  opacity: 0.75;
+  transform: scale(0.9);
+  border-color: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.char-card-img-wrap {
+  width: 100%;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+  position: relative;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.08);
+  transition: border-color 0.4s ease, background 0.4s ease;
+}
+
+.char-card-active .char-card-img-wrap {
+  border-color: rgba(249, 193, 89, 0.25);
+  background: radial-gradient(circle at center, rgba(249, 193, 89, 0.12) 0%, rgba(0, 0, 0, 0.4) 100%);
+}
+
+.char-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.char-card-name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  color: var(--gold);
+  padding: 12px 8px;
+  text-align: center;
+  letter-spacing: 0.1em;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  transition: color 0.4s ease, background 0.4s ease;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.char-card-active .char-card-name {
+  color: var(--gold);
+  background: rgba(249, 193, 89, 0.05);
+  text-shadow: 0 0 8px rgba(249, 193, 89, 0.5);
+}
+
+.char-card-inactive .char-card-name {
+  color: rgba(255, 255, 255, 0.4);
+  background: rgba(0, 0, 0, 0.4);
+}
+
+/* ── Stat Blocks ─────────────────────────────────────────────── */
+.stat-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-label {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 0.08em;
+}
+
+.stat-bar {
+  height: 8px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.stat-fill {
+  height: 100%;
+  border-radius: 4px;
+  width: 0%;
+  transition: width 0.6s ease;
+  box-shadow: 0 0 8px currentColor;
+}
+
+.stat-value {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  margin-top: 2px;
+}
+
+/* ── Byte Cards ──────────────────────────────────────────────── */
+#byte-carousel-track {
+  display: flex;
+  align-items: flex-end;
+  gap: 20px;
+  justify-content: center;
+}
+
+.byte-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 14px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s ease, box-shadow 0.3s ease;
+}
+
+.byte-card-active {
+  width: 200px;
+  opacity: 1;
+  transform: scale(1) translateY(-8px);
+  border: 2px solid var(--byte-color, var(--gold));
+  box-shadow:
+    0 0 32px rgba(249,193,89,0.4),
+    0 12px 36px rgba(0,0,0,0.7);
+  background: rgba(249,193,89,0.06);
+  z-index: 2;
+}
+
+.byte-card-inactive {
+  width: 150px;
+  opacity: 0.5;
+  transform: scale(0.85);
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(0,0,0,0.3);
+  z-index: 1;
+}
+
+.byte-card-inactive:hover {
+  opacity: 0.72;
+  transform: scale(0.89);
+}
+
+.byte-card-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 30%, rgba(249,193,89,0.15), transparent 70%);
+  pointer-events: none;
+}
+
+.byte-icon-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 18px;
+  z-index: 3;
+  filter: drop-shadow(0 0 4px rgba(0,0,0,0.5));
+}
+
+.byte-card-img-wrap {
+  width: 100%;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: rgba(0,0,0,0.25);
+}
+
+.byte-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.byte-card-name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  padding: 8px 6px 4px;
+  text-align: center;
+  width: 100%;
+  background: rgba(0,0,0,0.3);
+  letter-spacing: 0.1em;
+}
+
+.byte-card-role {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 11px;
+  color: rgba(255,255,255,0.5);
+  padding: 0 6px 8px;
+  text-align: center;
+  width: 100%;
+  background: rgba(0,0,0,0.3);
+}
+
+/* ── Skill Badge ─────────────────────────────────────────────── */
+.skill-badge {
+  border: 1px solid rgba(249,193,89,0.4);
+  border-radius: 8px;
+  padding: 8px 12px;
+  background: rgba(249,193,89,0.06);
+  text-align: center;
+  min-width: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ── Title Card ──────────────────────────────────────────────── */
+#screen-title-card {
+  background: #000;
+}
+
+#title-arc {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(16px, 3vw, 32px);
+  color: var(--gold);
+  letter-spacing: 0.3em;
+  text-shadow:
+    0 0 20px var(--gold-glow),
+    0 0 60px rgba(249,193,89,0.15);
+}
+
+#title-divider {
+  width: 200px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  transform-origin: center;
+}
+
+#title-sub {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(9px, 1.5vw, 14px);
+  color: rgba(255,255,255,0.8);
+  letter-spacing: 0.2em;
+  text-shadow: 0 0 16px rgba(255,255,255,0.2);
+}
+
+#title-tagline {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 14px;
+  color: rgba(255,255,255,0.35);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  margin-top: 16px;
+}
+
+/* ── Prelim Map Nodes ─────────────────────────────────────────── */
+.map-node {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 10;
+}
+
+.map-node-ring {
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  pointer-events: none;
+}
+
+.map-node-body {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 14px;
+  position: relative;
+  z-index: 2;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.map-node-label {
+  margin-top: 8px;
+  text-align: center;
+  pointer-events: none;
+}
+
+.map-node-label-sub {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 6px;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 0.08em;
+  margin-bottom: 2px;
+}
+
+.map-node-label-name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  color: #fff;
+  letter-spacing: 0.06em;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.9);
+}
+
+/* Active (unlocked) node */
+.map-node-active .map-node-body {
+  background: var(--gold);
+  color: #1a1000;
+  box-shadow:
+    0 0 24px rgba(249,193,89,0.8),
+    0 0 48px rgba(249,193,89,0.3),
+    inset 0 2px 0 rgba(255,255,255,0.3);
+}
+
+.map-node-active .map-node-ring {
+  border-color: rgba(249,193,89,0.6);
+  animation: nodeRingPulse 1.8s ease-in-out infinite;
+}
+
+.map-node-active:hover .map-node-body {
+  transform: scale(1.12);
+  box-shadow:
+    0 0 36px rgba(249,193,89,1),
+    0 0 72px rgba(249,193,89,0.4),
+    inset 0 2px 0 rgba(255,255,255,0.3);
+}
+
+.map-node-active .map-node-label-name {
+  color: var(--gold);
+  text-shadow: 0 0 12px var(--gold-glow);
+}
+
+/* Locked node */
+.map-node-locked .map-node-body {
+  background: rgba(255,255,255,0.06);
+  border: 2px solid rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.25);
+  font-size: 18px;
+}
+
+.map-node-locked .map-node-label-name {
+  color: rgba(255,255,255,0.35);
+}
+
+/* Boss node extra styling */
+.map-node-boss.map-node-locked .map-node-body {
+  background: rgba(220,38,38,0.08);
+  border-color: rgba(220,38,38,0.25);
+}
+
+@keyframes nodeRingPulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1);    opacity: 0.9; }
+  50%       { transform: translate(-50%, -50%) scale(1.55); opacity: 0;   }
+}
+
+/* Ring is positioned absolutely centered on the node-body */
+.map-node-body {
+  position: relative; /* ensure ring can position relative to this */
+}
+
+.map-node-active .map-node-ring {
+  position: absolute;
+  width: 72px;
+  height: 72px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 2px solid rgba(249,193,89,0.65);
+  animation: nodeRingPulse 1.8s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Prelim Map Sidebar ───────────────────────────────────────── */
+#map-sidebar {
+  background: rgba(6, 8, 20, 0.97);
+  border-left: 1px solid rgba(249,193,89,0.2);
+  backdrop-filter: blur(20px);
+}
+
+.sidebar-level-badge {
+  display: inline-block;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  background: rgba(249,193,89,0.12);
+  border: 1px solid rgba(249,193,89,0.3);
+  color: var(--gold);
+  letter-spacing: 0.1em;
+}
+
+.sidebar-level-badge-boss {
+  background: rgba(220,38,38,0.15);
+  border-color: rgba(220,38,38,0.4);
+  color: #fca5a5;
+}
+
+.sidebar-challenge-item,
+.sidebar-reward-item {
+  display: flex;
+  align-items: flex-start;
+  line-height: 1.5;
+  font-size: 13px;
+  color: rgba(255,255,255,0.8);
+}
+
+.stat-chip {
+  display: inline-block;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.stat-chip-hp {
+  background: rgba(34,197,94,0.12);
+  border: 1px solid rgba(34,197,94,0.3);
+  color: #4ade80;
+}
+
+.stat-chip-dmg {
+  background: rgba(239,68,68,0.12);
+  border: 1px solid rgba(239,68,68,0.3);
+  color: #f87171;
+}
+
+/* ── Map Header panel ─────────────────────────────────────────── */
+#map-header-panel {
+  display: inline-block;
+}
+
+/* ── Map HUD (bottom left) ───────────────────────────────────── */
+#map-hud {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+/* ── Scrollbar styling ───────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(249,193,89,0.3);
+  border-radius: 2px;
+}
+
+/* ── Sprite Sheet Animation (CSS steps(4)) ───────────────────── */
+/*
+ * Sprite window clips to exactly one frame.
+ * The img inside is width:400% (4× frame width) and animates
+ * translateX(0) → translateX(-100%) in steps(4), cycling 4 frames.
+ */
+@keyframes spriteIdle {
+  from { transform: translateX(0%);    }
+  to   { transform: translateX(-100%); }
+}
+@keyframes spriteAttack {
+  from { transform: translateX(0%);    }
+  to   { transform: translateX(-100%); }
+}
+@keyframes spriteAttackOnce {
+  from { transform: translateX(0%);  }
+  to   { transform: translateX(-75%); }
+}
+
+.sprite-window {
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.sprite-sheet {
+  height: 100%;
+  width: auto;
+  max-width: none;
+  position: absolute;
+  left: 0;
+  top: 0;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  animation: spriteIdle steps(4) 0.9s infinite;
+  will-change: transform;
+}
+
+/* Attack: play once, hold last frame */
+.sprite-sheet.sprite-attacking {
+  animation: spriteAttackOnce steps(3) 0.5s forwards;
+}
+
+/* Static: no animation (defeated/stun state) */
+.sprite-sheet.sprite-static {
+  animation: none;
+  transform: translateX(0%);
+}
+
+/* ── Screen shake ─────────────────────────────────────────────── */
+@keyframes screenShake {
+  0%   { transform: translateX(0);   }
+  15%  { transform: translateX(-8px); }
+  30%  { transform: translateX( 8px); }
+  45%  { transform: translateX(-5px); }
+  60%  { transform: translateX( 5px); }
+  75%  { transform: translateX(-3px); }
+  90%  { transform: translateX( 3px); }
+  100% { transform: translateX(0);   }
+}
+.battle-shaking {
+  animation: screenShake 0.4s ease both;
+}
+
+/* ── Battle HUD bars ──────────────────────────────────────────── */
+.battle-hud-bar {
+  height: 10px;
+  background: rgba(255,255,255,0.07);
+  border-radius: 5px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.battle-hp-fill {
+  height: 100%;
+  border-radius: 5px;
+  transition: width 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Battle question panel ────────────────────────────────────── */
+.battle-question-panel {
+  background: rgba(4, 6, 18, 0.94);
+  border: 1px solid rgba(249,193,89,0.2);
+  border-radius: 14px;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+/* ── Battle answer buttons ────────────────────────────────────── */
+.battle-answer-btn {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  color: rgba(255,255,255,0.85);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 14px;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, padding 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
+  line-height: 1.4;
+}
+.battle-answer-btn:hover:not(:disabled) {
+  background: rgba(255,255,255,0.07);
+  border-color: rgba(249,193,89,0.3);
+  color: #fff;
+  padding-left: 17px;
+}
+.battle-answer-btn.selected {
+  background: rgba(249,193,89,0.1);
+  border-color: var(--gold);
+  color: var(--gold);
+  box-shadow: 0 0 15px rgba(249,193,89,0.25);
+  padding-left: 19px;
+}
+.battle-answer-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+.battle-answer-letter {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  color: var(--gold);
+  min-width: 14px;
+  padding-top: 2px;
+  flex-shrink: 0;
+}
+
+/* ── Cutscene screen ──────────────────────────────────────────── */
+.cutscene-portrait {
+  height: 220px;
+  width: auto;
+  object-fit: contain;
+  image-rendering: pixelated;
+  filter: brightness(0.5) drop-shadow(0 4px 16px rgba(0,0,0,0.9));
+  transform: scale(0.88) translateY(6px);
+  transition: transform 0.3s ease, filter 0.3s ease;
+  display: block;
+}
+.cutscene-portrait.cs-active {
+  filter: brightness(1.1) drop-shadow(0 0 22px rgba(249,193,89,0.35));
+  transform: scale(1.08) translateY(-10px);
+}
+.cutscene-portrait.cs-dim {
+  filter: brightness(0.38) drop-shadow(0 4px 8px rgba(0,0,0,0.9));
+  transform: scale(0.86) translateY(8px);
+}
+
+#cutscene-left-portrait {
+  width: 220px !important;
+  height: 220px !important;
+  object-fit: cover !important;
+  object-position: left !important;
+}
+
+.cutscene-name-badge {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  color: var(--gold);
+  background: rgba(4, 6, 18, 0.9);
+  border: 1px solid rgba(249,193,89,0.3);
+  border-radius: 4px;
+  padding: 4px 10px;
+  text-align: center;
+  margin-top: 6px;
+}
+
+.cutscene-dialogue-box {
+  background: rgba(3, 5, 15, 0.96);
+  border: 2px solid rgba(249,193,89,0.28);
+  border-radius: 14px;
+  position: relative;
+}
+/* Corner decorations */
+.cutscene-dialogue-box::before,
+.cutscene-dialogue-box::after {
+  content: '';
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-color: rgba(249,193,89,0.6);
+  border-style: solid;
+}
+.cutscene-dialogue-box::before {
+  top: -2px; left: -2px;
+  border-width: 2px 0 0 2px;
+  border-radius: 4px 0 0 0;
+}
+.cutscene-dialogue-box::after {
+  top: -2px; right: -2px;
+  border-width: 2px 2px 0 0;
+  border-radius: 0 4px 0 0;
+}
+
+/* ── VS Banner ────────────────────────────────────────────────── */
+.vs-text-glow {
+  text-shadow:
+    0 0 20px rgba(249,193,89,0.9),
+    0 0 60px rgba(249,193,89,0.5),
+    0 0 120px rgba(249,193,89,0.2);
+}
+
+.vs-pokemon-bg {
+  background:
+    linear-gradient(112deg, #1d4ed8 0 48%, transparent 48% 52%, #b91c1c 52% 100%);
+}
+
+.vs-pokemon-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at center, rgba(255,255,255,0.26), transparent 18%),
+    linear-gradient(90deg, rgba(0,0,0,0.36), transparent 32%, transparent 68%, rgba(0,0,0,0.36));
+}
+
+.vs-speed-lines {
+  opacity: 0.38;
+  background:
+    repeating-linear-gradient(104deg, transparent 0 22px, rgba(255,255,255,0.22) 23px 25px, transparent 26px 54px);
+  mix-blend-mode: screen;
+}
+
+.vs-stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 190px minmax(0, 1fr);
+  align-items: center;
+  gap: 24px;
+}
+
+.vs-trainer-side {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+.vs-player-panel {
+  justify-self: start;
+  align-items: flex-start;
+}
+
+.vs-enemy-panel {
+  justify-self: end;
+  align-items: flex-end;
+}
+
+.vs-sprite-ring {
+  filter: drop-shadow(0 18px 14px rgba(0,0,0,0.52));
+}
+
+.vs-nameplate {
+  min-width: 250px;
+  padding: 14px 18px;
+  border: 3px solid rgba(255,255,255,0.78);
+  background: rgba(5, 8, 20, 0.82);
+  box-shadow:
+    7px 7px 0 rgba(0,0,0,0.45),
+    inset 0 0 0 2px rgba(0,0,0,0.45);
+  transform: skewX(-8deg);
+}
+
+.vs-nameplate > * {
+  display: block;
+  transform: skewX(8deg);
+}
+
+.vs-nameplate-player {
+  border-color: rgba(147,197,253,0.95);
+}
+
+.vs-nameplate-enemy {
+  border-color: rgba(252,165,165,0.95);
+}
+
+.vs-kicker {
+  margin-bottom: 8px;
+  color: rgba(255,255,255,0.65);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  letter-spacing: 0.12em;
+}
+
+.vs-center-burst {
+  width: 176px;
+  height: 176px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  justify-self: center;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, #fff 0 38%, #facc15 39% 51%, #111827 52% 60%, transparent 61%);
+  filter: drop-shadow(0 0 28px rgba(250,204,21,0.72));
+}
+
+#vs-text {
+  color: #111827;
+  font-size: 54px;
+  text-shadow: 2px 2px 0 #fff, -2px -2px 0 #fff;
+}
+
+/* ── Tutorial callout ─────────────────────────────────────────── */
+.tutorial-callout-panel {
+  background: rgba(3, 5, 18, 0.98);
+  border: 2px solid var(--gold);
+  border-radius: 16px;
+  box-shadow:
+    0 0 50px rgba(249,193,89,0.2),
+    0 0 100px rgba(249,193,89,0.08);
+  position: relative;
+}
+.tutorial-callout-panel::before {
+  content: '★ TUTORIAL ★';
+  position: absolute;
+  top: -11px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  color: var(--gold);
+  background: rgba(3, 5, 18, 0.98);
+  padding: 2px 14px;
+  border: 1px solid rgba(249,193,89,0.45);
+  border-radius: 4px;
+  white-space: nowrap;
+  letter-spacing: 0.15em;
+}
+
+/* ── Battle particles ─────────────────────────────────────────── */
+.battle-particle {
+  position: fixed;
+  width: 7px;
+  height: 7px;
+  border-radius: 2px;
+  pointer-events: none;
+  z-index: 25;
+  image-rendering: pixelated;
+}
+
+/* ── Damage flash ─────────────────────────────────────────────── */
+#battle-damage-flash {
+  position: absolute;
+  inset: 0;
+  background: rgba(220, 38, 38, 0.28);
+  pointer-events: none;
+  opacity: 0;
+  z-index: 18;
+}
+
+/* ── Utility ─────────────────────────────────────────────────── */
+.hidden {
+  display: none !important;
+}
+
+/* Prevent text selection on interactive elements */
+.pixel-btn, .pixel-btn-secondary, .carousel-arrow,
+.char-card, .byte-card, .map-node {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* ── Responsive tweaks ───────────────────────────────────────── */
+@media (max-width: 768px) {
+  .char-card { width: 120px; }
+  .byte-card-active  { width: 150px; }
+  .byte-card-inactive{ width: 110px; }
+  #title-arc { font-size: 14px; }
+  #title-sub { font-size: 9px;  }
+}
+
+/* ── Battle Continuous Floor Platform (Bookworm Adventures style) ─────────────── */
+.battle-floor-platform {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 48px; /* Thickness of the platform */
+  background: linear-gradient(180deg, rgba(16, 22, 40, 0.96) 0%, rgba(6, 8, 16, 0.99) 100%);
+  border-top: 3px solid rgba(249, 193, 89, 0.55); /* Gold divider line */
+  box-shadow: 
+    0 -8px 20px rgba(0, 0, 0, 0.65),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  z-index: 1;
+}
+
+.fighter-platform-group {
+  display: flex;
+  align-items: flex-end;
+}
+
+.fighter-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+/* Soft Drop Shadows below fighters */
+.sprite-shadow {
+  width: 64px;
+  height: 6px;
+  background: rgba(0, 0, 0, 0.72);
+  border-radius: 50%;
+  filter: blur(2px);
+  margin-top: -3px;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ── Byte Skill Activation Button (#btn-byte-skill) ───────────── */
+#btn-byte-skill {
+  transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+
+#btn-byte-skill:hover:not(:disabled) {
+  border-color: rgba(168, 85, 247, 0.7) !important;
+  color: #fff !important;
+  background: rgba(168, 85, 247, 0.15) !important;
+  box-shadow: 0 0 12px rgba(168, 85, 247, 0.4);
+  transform: scale(1.05);
+}
+
+#btn-byte-skill.ready {
+  border-color: #c084fc !important;
+  color: #f3e8ff !important;
+  background: rgba(168, 85, 247, 0.3) !important;
+  box-shadow: 
+    0 0 15px rgba(168, 85, 247, 0.6),
+    0 0 30px rgba(168, 85, 247, 0.3),
+    inset 0 1px 0 rgba(255,255,255,0.2) !important;
+  animation: pulsePurpleNeon 1.4s ease-in-out infinite;
+}
+
+#btn-byte-skill:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  color: rgba(255, 255, 255, 0.3) !important;
+}
+
+@keyframes pulsePurpleNeon {
+  0%, 100% {
+    box-shadow: 
+      0 0 12px rgba(168, 85, 247, 0.5),
+      0 0 24px rgba(168, 85, 247, 0.2);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 
+      0 0 20px rgba(168, 85, 247, 0.85),
+      0 0 40px rgba(168, 85, 247, 0.4);
+    transform: scale(1.04);
+  }
+}
+
+/* Battle screen: Bookworm-style side panels and center quiz board */
+.battle-top-hud {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 12px 28px;
+  background: linear-gradient(180deg, rgba(3,5,14,0.94), rgba(7,10,24,0.78));
+  border-bottom: 2px solid rgba(249,193,89,0.24);
+  backdrop-filter: blur(12px);
+}
+
+.battle-hud-cluster {
+  min-width: 180px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.battle-hud-enemy {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.battle-round-badge {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 18px;
+  border: 2px solid rgba(249,193,89,0.32);
+  border-radius: 4px;
+  background: rgba(249,193,89,0.08);
+  box-shadow: 0 0 18px rgba(249,193,89,0.12);
+}
+
+#screen-battle > .relative {
+  position: relative;
+}
+
+.battle-info-panel {
+  position: absolute;
+  top: 86px;
+  z-index: 16;
+  width: clamp(188px, 22vw, 260px);
+  min-height: 292px;
+  padding: 16px;
+  background: linear-gradient(180deg, rgba(9,14,30,0.96), rgba(4,6,16,0.94));
+  border: 2px solid rgba(249,193,89,0.32);
+  border-radius: 8px;
+  box-shadow:
+    0 16px 30px rgba(0,0,0,0.48),
+    inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+.battle-info-player {
+  left: 22px;
+}
+
+.battle-info-enemy {
+  right: 22px;
+  border-color: rgba(248,113,113,0.36);
+}
+
+.battle-panel-title {
+  margin-bottom: 14px;
+  color: rgba(249,193,89,0.72);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  letter-spacing: 0.12em;
+}
+
+.battle-name-main,
+.battle-name-byte {
+  color: var(--gold);
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(9px, 1.1vw, 12px);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.battle-name-byte {
+  color: #d8b4fe;
+  margin-bottom: 7px;
+}
+
+.battle-name-enemy {
+  color: #fca5a5;
+}
+
+.battle-role-line,
+.battle-ability-name {
+  color: rgba(255,255,255,0.62);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.battle-ability-name {
+  color: #c084fc;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.battle-panel-copy {
+  margin-top: 9px;
+  color: rgba(255,255,255,0.72);
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.battle-divider {
+  width: 100%;
+  height: 1px;
+  margin: 14px 0;
+  background: linear-gradient(90deg, rgba(249,193,89,0.48), transparent);
+}
+
+.battle-stage-arena {
+  margin-inline: clamp(190px, 23vw, 280px);
+  margin-top: 4px;
+  width: auto !important;
+}
+
+.battle-center-question {
+  width: min(620px, calc(100vw - 430px));
+  margin: 0 auto 12px;
+  z-index: 17;
+}
+
+.battle-party-group,
+.battle-enemy-group {
+  position: absolute;
+  bottom: 56px;
+  z-index: 10;
+  display: flex;
+  align-items: flex-end;
+}
+
+.battle-party-group {
+  left: 9%;
+  gap: 34px;
+}
+
+.battle-enemy-group {
+  right: 10%;
+}
+
+.fighter-byte {
+  transform: translateY(10px);
+}
+
+.battle-question-panel {
+  border: 2px solid rgba(249,193,89,0.35);
+  border-radius: 8px;
+  box-shadow:
+    0 14px 34px rgba(0,0,0,0.48),
+    inset 0 0 0 1px rgba(255,255,255,0.06);
+}
+
+.battle-skill-slot {
+  margin-top: 14px;
+}
+
+#btn-byte-skill.battle-skill-button {
+  width: 100%;
+  min-width: 0;
+  margin-top: 0 !important;
+  padding: 8px 10px !important;
+  font-size: 7px !important;
+}
+
+#battle-player-name,
+#battle-byte-name,
+#battle-enemy-name {
+  display: none;
+}
+
+.battle-floor-platform {
+  height: 58px;
+  background:
+    linear-gradient(180deg, rgba(57,66,82,0.98) 0%, rgba(18,24,38,0.98) 46%, rgba(5,8,17,1) 100%);
+  border-top: 4px solid rgba(249,193,89,0.7);
+  box-shadow:
+    0 -12px 26px rgba(0,0,0,0.62),
+    inset 0 9px 0 rgba(255,255,255,0.08),
+    inset 0 -5px 0 rgba(0,0,0,0.5);
+}
+
+.battle-floor-platform::before,
+.battle-floor-platform::after {
+  content: '';
+  position: absolute;
+  bottom: 34px;
+  width: 210px;
+  height: 28px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(249,193,89,0.28), rgba(249,193,89,0.08) 48%, transparent 70%);
+}
+
+.battle-floor-platform::before {
+  left: 8%;
+}
+
+.battle-floor-platform::after {
+  right: 8%;
+}
+
+@media (max-width: 920px) {
+  .battle-info-panel {
+    width: 170px;
+    padding: 12px;
+  }
+
+  .battle-stage-arena {
+    margin-inline: 174px;
+  }
+
+  .battle-center-question {
+    width: calc(100vw - 360px);
+  }
+
+  .battle-answer-btn {
+    font-size: 12px;
+    padding: 8px 10px;
+  }
+}
+
+/* ── Bytes Collection Panel Cards (namespaced to avoid conflict with byteSelect) ── */
+#bytes-panel .byte-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 16px 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(10,14,28,0.88);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  cursor: pointer;
+  min-height: 260px;
+  /* override byteSelect carousel dimensions */
+  width: auto !important;
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+#bytes-panel .byte-card-unlocked {
+  border-color: rgba(249,193,89,0.18);
+}
+
+#bytes-panel .byte-card-unlocked:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 12px 36px rgba(0,0,0,0.6);
+  border-color: rgba(249,193,89,0.4);
+}
+
+#bytes-panel .byte-card-active {
+  border-color: var(--gold) !important;
+  box-shadow: 0 0 28px rgba(249,193,89,0.35), 0 8px 32px rgba(0,0,0,0.7) !important;
+  background: rgba(249,193,89,0.05) !important;
+  transform: none !important;
+}
+
+#bytes-panel .byte-card-locked {
+  border-color: rgba(255,255,255,0.06);
+  background: rgba(6,8,18,0.9);
+  cursor: not-allowed;
+  opacity: 0.6 !important;
+  filter: grayscale(0.4);
+}
+
+#bytes-panel .byte-card-icon {
+  font-size: 22px;
+  margin-bottom: 8px;
+  filter: drop-shadow(0 0 8px currentColor);
+}
+
+#bytes-panel .byte-card-img-wrap {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+#bytes-panel .byte-card-img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.byte-card-stats {
+  display: flex;
+  gap: 10px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 12px;
+  color: rgba(255,255,255,0.5);
+  margin-top: 6px;
+}
+
+.byte-card-skill {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.byte-card-active-badge {
+  margin-top: 10px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  color: var(--gold);
+  border: 1px solid rgba(249,193,89,0.5);
+  padding: 4px 10px;
+  border-radius: 3px;
+  background: rgba(249,193,89,0.08);
+  letter-spacing: 0.08em;
+  animation: byte-active-pulse 2s ease-in-out infinite;
+}
+
+@keyframes byte-active-pulse {
+  0%, 100% { box-shadow: 0 0 0 rgba(249,193,89,0); }
+  50%       { box-shadow: 0 0 14px rgba(249,193,89,0.4); }
+}
+
+.byte-card-switch-btn {
+  background: rgba(167,139,250,0.1);
+  border-color: rgba(167,139,250,0.4);
+  color: #c4b5fd;
+  transition: all 0.18s ease;
+}
+
+.byte-card-switch-btn:hover {
+  background: rgba(167,139,250,0.25);
+  box-shadow: 0 0 12px rgba(167,139,250,0.3);
+}
+
+.byte-card-locked-icon {
+  font-size: 32px;
+  margin-bottom: 14px;
+  margin-top: 20px;
+  opacity: 0.5;
+}
+
+.byte-card-locked-name {
+  margin-bottom: 8px;
+}
+
+.flip-attack {
+  scale: -1 1;
+}
+
+/* Scrollbar utility for modals */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 4px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.03);
+  border-radius: 2px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.15);
+  border-radius: 2px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.3);
+}
+
+/* end of stylesheet */
