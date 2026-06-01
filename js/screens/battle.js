@@ -620,6 +620,13 @@ window.BattleScreen = (() => {
       poturtle: ['#4ade80','#86efac','#22c55e'],
       firewisp: ['#fb923c','#fbbf24','#f97316'],
       lagoon:   ['#38bdf8','#7dd3fc','#0ea5e9'],
+      pinglet:  ['#22d3ee','#06b6d4','#3b82f6'],
+      bitbug:   ['#10b981','#34d399','#059669'],
+      voltbyte: ['#facc15','#fbbf24','#fb923c'],
+      ramhorn:  ['#ef4444','#dc2626','#991b1b'],
+      keyfox:   ['#facc15','#fef08a','#eab308'],
+      datashade:['#6366f1','#4f46e5','#312e81'],
+      glitchip: ['#ec4899','#06b6d4','#84cc16','#a855f7'],
     };
     const pal = palettes[byte?.id] ?? ['#f9c159','#fbbf24','#fde68a'];
 
@@ -637,6 +644,23 @@ window.BattleScreen = (() => {
       p.style.background = pal[i % pal.length];
       p.style.left = (cx - 3.5) + 'px';
       p.style.top  = (cy - 3.5) + 'px';
+
+      // Custom premium styling per Byte's elemental identity
+      if (byte?.id === 'pinglet' || byte?.id === 'lagoon') {
+        p.style.borderRadius = '50%';
+      } else if (byte?.id === 'bitbug') {
+        p.style.borderRadius = '0px';
+      } else if (byte?.id === 'ramhorn') {
+        p.style.width = '9px';
+        p.style.height = '9px';
+        p.style.borderRadius = '1px';
+      } else if (byte?.id === 'keyfox') {
+        p.style.transform = 'rotate(45deg)';
+        p.style.boxShadow = '0 0 4px #facc15';
+      } else if (byte?.id === 'glitchip') {
+        p.style.borderRadius = Math.random() > 0.5 ? '50%' : '0px';
+      }
+
       document.body.appendChild(p);   // body-level so z-index is clean
 
       const angle = (i / 18) * Math.PI * 2 + Math.random() * 0.4;
@@ -800,6 +824,7 @@ window.BattleScreen = (() => {
     _setByteCharge(_byteCharge + 1);
 
     // ── Player shifts to battle sprite ──
+    AudioManager.playPlayerAttackSFX();
     const playerImg = document.getElementById('battle-player-sprite-img');
     playerImg.src   = _charSprites.battle;
     _swapToAttack(playerImg);
@@ -819,6 +844,7 @@ window.BattleScreen = (() => {
         onComplete: () => {
           // Particles + enemy recoil
           _spawnParticles();
+          AudioManager.playByteAttackSFX(byte.id);
           gsap.fromTo('#battle-enemy-sprite-window',
             { x: 0 },
             { x: 18, duration: 0.08, ease: 'power2.out', yoyo: true, repeat: 3 });
@@ -914,6 +940,10 @@ window.BattleScreen = (() => {
           void screen.offsetWidth;
           screen.classList.add('battle-shaking');
         }
+
+        // Enemy audio + particles hit on player
+        AudioManager.playEnemyAttackSFX(_levelData?.id ?? 1, _levelData?.isBoss ?? false);
+        _spawnEnemyParticles();
 
         // Red flash
         gsap.fromTo('#battle-damage-flash',
@@ -1470,6 +1500,186 @@ window.BattleScreen = (() => {
         ease: 'power3.out',
         onComplete: () => p.remove(),
       });
+    }
+  }
+
+  // Spawns highly customized thematic particle effects centered on the player
+  function _spawnEnemyParticles() {
+    const layer = document.getElementById('battle-particle-layer');
+    if (!layer) return;
+
+    const playerWin = document.getElementById('battle-player-sprite-window');
+    if (!playerWin) return;
+
+    const rect = playerWin.getBoundingClientRect();
+    const cx   = rect.left + rect.width  / 2;
+    const cy   = rect.top  + rect.height / 2;
+
+    const lvlId = _levelData?.id ?? 1;
+    const isBoss = _levelData?.isBoss ?? false;
+
+    if (isBoss || lvlId === 5) {
+      // Overclocked Ms.K: grading red and gold letters (A+, F, 100, ✗, C-, 0/10)
+      const symbols = ['A+', 'F', '100', '✗', 'C-', '0/10'];
+      const colors = ['#f87171', '#ef4444', '#fbbf24', '#fb7185', '#eab308'];
+      
+      for (let i = 0; i < 24; i++) {
+        const p = document.createElement('div');
+        p.className = 'battle-particle';
+        p.style.cssText = `
+          position: fixed;
+          pointer-events: none;
+          z-index: 25;
+          font-family: 'Press Start 2P', monospace;
+          font-size: ${7 + Math.random() * 5}px;
+          color: ${colors[i % colors.length]};
+          text-shadow: 0 0 6px ${colors[i % colors.length]};
+          left: ${cx}px;
+          top: ${cy}px;
+          transform: translate(-50%, -50%);
+        `;
+        p.textContent = symbols[i % symbols.length];
+        document.body.appendChild(p);
+
+        const angle = (i / 24) * Math.PI * 2 + Math.random() * 0.35;
+        const dist  = 60 + Math.random() * 80;
+        gsap.to(p, {
+          x: Math.cos(angle) * dist,
+          y: Math.sin(angle) * dist,
+          opacity: 0,
+          scale: 1.3,
+          rotation: Math.random() * 720 - 360,
+          duration: 0.7 + Math.random() * 0.3,
+          ease: 'power3.out',
+          onComplete: () => p.remove(),
+        });
+      }
+      return;
+    }
+
+    switch (lvlId) {
+      case 1: {
+        // Bit Mite: Dark purple and green glitch pixel squares
+        const colors = ['#a78bfa', '#818cf8', '#34d399', '#059669'];
+        for (let i = 0; i < 16; i++) {
+          const p = document.createElement('div');
+          p.className = 'battle-particle';
+          p.style.background = colors[i % colors.length];
+          p.style.borderRadius = '0px';
+          p.style.left = (cx - 3.5) + 'px';
+          p.style.top  = (cy - 3.5) + 'px';
+          document.body.appendChild(p);
+
+          const angle = (i / 16) * Math.PI * 2 + Math.random() * 0.4;
+          const dist  = 40 + Math.random() * 50;
+          gsap.to(p, {
+            x: Math.cos(angle) * dist,
+            y: Math.sin(angle) * dist,
+            opacity: 0,
+            scale: Math.random() * 1.2 + 0.4,
+            duration: 0.5 + Math.random() * 0.2,
+            ease: 'power2.out',
+            onComplete: () => p.remove(),
+          });
+        }
+        break;
+      }
+      case 2: {
+        // Cache Slime: Oozy green and teal slime droplets with gravity
+        const colors = ['#22c55e', '#4ade80', '#10b981', '#34d399'];
+        for (let i = 0; i < 18; i++) {
+          const p = document.createElement('div');
+          p.className = 'battle-particle';
+          p.style.background = colors[i % colors.length];
+          p.style.borderRadius = '50%';
+          p.style.width = (6 + Math.random() * 5) + 'px';
+          p.style.height = (6 + Math.random() * 5) + 'px';
+          p.style.left = (cx - 4) + 'px';
+          p.style.top  = (cy - 4) + 'px';
+          document.body.appendChild(p);
+
+          const angle = (i / 18) * Math.PI * 2 + Math.random() * 0.3;
+          const dist  = 35 + Math.random() * 45;
+          
+          gsap.to(p, {
+            x: Math.cos(angle) * dist,
+            y: Math.sin(angle) * dist + 35, // Drifts downwards like gravity
+            opacity: 0,
+            scale: 0.8,
+            duration: 0.6 + Math.random() * 0.3,
+            ease: 'sine.out',
+            onComplete: () => p.remove(),
+          });
+        }
+        break;
+      }
+      case 3: {
+        // Syntax Sprout: Red/yellow error code syntax characters (!, {, }, ;, error)
+        const symbols = ['!', '{', '}', ';', 'type_error', 'syntax'];
+        const colors = ['#ef4444', '#fca5a5', '#fbbf24', '#f97316'];
+        for (let i = 0; i < 18; i++) {
+          const p = document.createElement('div');
+          p.className = 'battle-particle';
+          p.style.cssText = `
+            position: fixed;
+            pointer-events: none;
+            z-index: 25;
+            font-family: 'Press Start 2P', monospace;
+            font-size: ${8 + Math.random() * 4}px;
+            color: ${colors[i % colors.length]};
+            text-shadow: 0 0 5px ${colors[i % colors.length]};
+            left: ${cx}px;
+            top: ${cy}px;
+            transform: translate(-50%, -50%);
+          `;
+          p.textContent = symbols[i % symbols.length];
+          document.body.appendChild(p);
+
+          const angle = (i / 18) * Math.PI * 2 + Math.random() * 0.4;
+          const dist  = 45 + Math.random() * 60;
+          gsap.to(p, {
+            x: Math.cos(angle) * dist,
+            y: Math.sin(angle) * dist,
+            opacity: 0,
+            scale: 1.2,
+            rotation: Math.random() * 360 - 180,
+            duration: 0.6 + Math.random() * 0.25,
+            ease: 'power3.out',
+            onComplete: () => p.remove(),
+          });
+        }
+        break;
+      }
+      case 4: {
+        // File Phantom: Ghostly semi-transparent cyan and white flicker pixels
+        const colors = ['#22d3ee', '#e0f7fa', '#ffffff', '#06b6d4'];
+        for (let i = 0; i < 20; i++) {
+          const p = document.createElement('div');
+          p.className = 'battle-particle';
+          p.style.background = colors[i % colors.length];
+          p.style.boxShadow = '0 0 8px rgba(34, 211, 238, 0.7)';
+          p.style.left = (cx - 3.5) + 'px';
+          p.style.top  = (cy - 3.5) + 'px';
+          document.body.appendChild(p);
+
+          const angle = (i / 20) * Math.PI * 2 + Math.random() * 0.5;
+          const dist  = 50 + Math.random() * 60;
+          
+          gsap.to(p, {
+            x: Math.cos(angle) * dist,
+            y: Math.sin(angle) * dist,
+            opacity: 0,
+            scale: 0.2,
+            duration: 0.7 + Math.random() * 0.3,
+            ease: 'power2.out',
+            onComplete: () => p.remove(),
+          });
+        }
+        break;
+      }
+      default: {
+        _spawnCustomParticles('spark');
+      }
     }
   }
   // ── Public enter ──────────────────────────────────────────

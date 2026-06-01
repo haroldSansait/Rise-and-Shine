@@ -558,6 +558,309 @@ window.AudioManager = (() => {
     o.start(now); o.stop(now + 0.32);
   }
 
+  // Player digital blade swing/swoosh
+  function playPlayerAttackSFX() {
+    const ctx = getAudioCtx();
+    const now = ctx.currentTime;
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    const f = ctx.createBiquadFilter();
+    
+    o.connect(f);
+    f.connect(g);
+    g.connect(ctx.destination);
+    
+    o.type = 'triangle';
+    o.frequency.setValueAtTime(600, now);
+    o.frequency.exponentialRampToValueAtTime(150, now + 0.15);
+    
+    f.type = 'bandpass';
+    f.frequency.setValueAtTime(800, now);
+    f.frequency.exponentialRampToValueAtTime(300, now + 0.15);
+    f.Q.setValueAtTime(3, now);
+    
+    g.gain.setValueAtTime(0.2, now);
+    g.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+    
+    o.start(now);
+    o.stop(now + 0.16);
+  }
+
+  // Procedural attack sound effects matching Byte elemental themes
+  function playByteAttackSFX(byteId) {
+    const ctx = getAudioCtx();
+    const now = ctx.currentTime;
+
+    const sfxMap = {
+      pinglet: () => {
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.type = 'sine';
+        o.frequency.setValueAtTime(880, now);
+        o.frequency.exponentialRampToValueAtTime(1760, now + 0.1);
+        g.gain.setValueAtTime(0.18, now);
+        g.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+        o.connect(g); g.connect(ctx.destination);
+        o.start(now); o.stop(now + 0.13);
+      },
+      bitbug: () => {
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.type = 'sawtooth';
+        o.frequency.setValueAtTime(180, now);
+        o.frequency.linearRampToValueAtTime(350, now + 0.08);
+        o.frequency.linearRampToValueAtTime(120, now + 0.15);
+        g.gain.setValueAtTime(0.15, now);
+        g.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+        o.connect(g); g.connect(ctx.destination);
+        o.start(now); o.stop(now + 0.16);
+      },
+      poturtle: () => {
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        const f = ctx.createBiquadFilter();
+        o.type = 'triangle';
+        o.frequency.setValueAtTime(110, now);
+        o.frequency.exponentialRampToValueAtTime(45, now + 0.22);
+        f.type = 'lowpass';
+        f.frequency.value = 180;
+        g.gain.setValueAtTime(0.3, now);
+        g.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+        o.connect(f); f.connect(g); g.connect(ctx.destination);
+        o.start(now); o.stop(now + 0.26);
+      },
+      voltbyte: () => {
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.type = 'square';
+        o.frequency.setValueAtTime(1200, now);
+        o.frequency.setValueAtTime(400, now + 0.04);
+        o.frequency.setValueAtTime(1600, now + 0.08);
+        o.frequency.setValueAtTime(600, now + 0.12);
+        g.gain.setValueAtTime(0.12, now);
+        g.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+        o.connect(g); g.connect(ctx.destination);
+        o.start(now); o.stop(now + 0.17);
+      },
+      ramhorn: () => {
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.type = 'sawtooth';
+        o.frequency.setValueAtTime(220, now);
+        o.frequency.exponentialRampToValueAtTime(55, now + 0.28);
+        g.gain.setValueAtTime(0.25, now);
+        g.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+        o.connect(g); g.connect(ctx.destination);
+        o.start(now); o.stop(now + 0.32);
+      },
+      firewisp: () => {
+        const bufLen = ctx.sampleRate * 0.25;
+        const buffer = ctx.createBuffer(1, bufLen, ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufLen; i++) data[i] = Math.random() * 2 - 1;
+        const noise = ctx.createBufferSource();
+        noise.buffer = buffer;
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(1000, now);
+        filter.frequency.exponentialRampToValueAtTime(250, now + 0.2);
+        const ng = ctx.createGain();
+        ng.gain.setValueAtTime(0.22, now);
+        ng.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+        noise.connect(filter); filter.connect(ng); ng.connect(ctx.destination);
+        noise.start(now);
+      },
+      keyfox: () => {
+        [0, 0.04, 0.08].forEach((d, idx) => {
+          const freq = [987.77, 1174.66, 1318.51][idx];
+          const o = ctx.createOscillator();
+          const g = ctx.createGain();
+          o.type = 'square';
+          o.frequency.value = freq;
+          g.gain.setValueAtTime(0.12, now + d);
+          g.gain.exponentialRampToValueAtTime(0.001, now + d + 0.06);
+          o.connect(g); g.connect(ctx.destination);
+          o.start(now + d); o.stop(now + d + 0.07);
+        });
+      },
+      lagoon: () => {
+        const carrier = ctx.createOscillator();
+        const modulator = ctx.createOscillator();
+        const modGain = ctx.createGain();
+        const carGain = ctx.createGain();
+        modulator.frequency.value = 18;
+        modGain.gain.value = 45;
+        carrier.type = 'sine';
+        carrier.frequency.setValueAtTime(440, now);
+        carrier.frequency.exponentialRampToValueAtTime(180, now + 0.22);
+        carGain.gain.setValueAtTime(0.2, now);
+        carGain.gain.exponentialRampToValueAtTime(0.001, now + 0.24);
+        modulator.connect(modGain); modGain.connect(carrier.frequency);
+        carrier.connect(carGain); carGain.connect(ctx.destination);
+        modulator.start(now); carrier.start(now);
+        modulator.stop(now + 0.24); carrier.stop(now + 0.24);
+      },
+      datashade: () => {
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        const f = ctx.createBiquadFilter();
+        o.type = 'sawtooth';
+        o.frequency.setValueAtTime(160, now);
+        o.frequency.exponentialRampToValueAtTime(40, now + 0.25);
+        f.type = 'peaking';
+        f.frequency.setValueAtTime(200, now);
+        f.frequency.exponentialRampToValueAtTime(800, now + 0.22);
+        f.Q.value = 5;
+        g.gain.setValueAtTime(0.2, now);
+        g.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+        o.connect(f); f.connect(g); g.connect(ctx.destination);
+        o.start(now); o.stop(now + 0.27);
+      },
+      glitchip: () => {
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.type = 'square';
+        o.frequency.setValueAtTime(150 + Math.random() * 800, now);
+        o.frequency.setValueAtTime(150 + Math.random() * 800, now + 0.03);
+        o.frequency.setValueAtTime(150 + Math.random() * 800, now + 0.06);
+        o.frequency.setValueAtTime(150 + Math.random() * 800, now + 0.09);
+        g.gain.setValueAtTime(0.15, now);
+        g.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+        o.connect(g); g.connect(ctx.destination);
+        o.start(now); o.stop(now + 0.13);
+      }
+    };
+
+    const sfxFn = sfxMap[byteId] ?? sfxMap.glitchip;
+    sfxFn();
+  }
+
+  // Procedural attack sound effects for Glitchborn/Stage Bosses
+  function playEnemyAttackSFX(levelId, isBoss) {
+    const ctx = getAudioCtx();
+    const now = ctx.currentTime;
+
+    if (isBoss || levelId === 5) {
+      // Overclocked Ms.K: Alarm burst + metallic crash slam
+      const alarm = ctx.createOscillator();
+      const alarmGain = ctx.createGain();
+      alarm.type = 'square';
+      alarm.frequency.setValueAtTime(880, now);
+      alarm.frequency.linearRampToValueAtTime(440, now + 0.15);
+      alarmGain.gain.setValueAtTime(0.15, now);
+      alarmGain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+      alarm.connect(alarmGain); alarmGain.connect(ctx.destination);
+      alarm.start(now); alarm.stop(now + 0.15);
+
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.type = 'sawtooth';
+      o.frequency.setValueAtTime(300, now + 0.05);
+      o.frequency.exponentialRampToValueAtTime(45, now + 0.35);
+
+      const bufLen = ctx.sampleRate * 0.3;
+      const buf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
+      const data = buf.getChannelData(0);
+      for (let i = 0; i < bufLen; i++) data[i] = Math.random() * 2 - 1;
+      const noise = ctx.createBufferSource();
+      noise.buffer = buf;
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.value = 400;
+      const ng = ctx.createGain();
+      ng.gain.setValueAtTime(0.28, now + 0.05);
+      ng.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+
+      g.gain.setValueAtTime(0.25, now + 0.05);
+      g.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+
+      o.connect(g); g.connect(ctx.destination);
+      noise.connect(filter); filter.connect(ng); ng.connect(ctx.destination);
+      o.start(now + 0.05); o.stop(now + 0.36);
+      noise.start(now + 0.05);
+      return;
+    }
+
+    switch (levelId) {
+      case 1: { // Bit Mite: digital chomp
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.type = 'triangle';
+        o.frequency.setValueAtTime(220, now);
+        o.frequency.exponentialRampToValueAtTime(60, now + 0.14);
+        
+        const bufLen = ctx.sampleRate * 0.08;
+        const buf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
+        const data = buf.getChannelData(0);
+        for (let i = 0; i < bufLen; i++) data[i] = Math.random() * 2 - 1;
+        const noise = ctx.createBufferSource();
+        noise.buffer = buf;
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.value = 600;
+        const ng = ctx.createGain();
+        ng.gain.setValueAtTime(0.2, now);
+        ng.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+        
+        g.gain.setValueAtTime(0.18, now);
+        g.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
+        
+        o.connect(g); g.connect(ctx.destination);
+        noise.connect(filter); filter.connect(ng); ng.connect(ctx.destination);
+        o.start(now); o.stop(now + 0.15);
+        noise.start(now);
+        break;
+      }
+      case 2: { // Cache Slime: Squishy pop
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.type = 'sine';
+        o.frequency.setValueAtTime(150, now);
+        o.frequency.exponentialRampToValueAtTime(400, now + 0.12);
+        g.gain.setValueAtTime(0.2, now);
+        g.gain.linearRampToValueAtTime(0.001, now + 0.15);
+        o.connect(g); g.connect(ctx.destination);
+        o.start(now); o.stop(now + 0.16);
+        break;
+      }
+      case 3: { // Syntax Sprout: Jagged compile error buzz
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.type = 'sawtooth';
+        o.frequency.setValueAtTime(140, now);
+        o.frequency.setValueAtTime(160, now + 0.03);
+        o.frequency.setValueAtTime(120, now + 0.06);
+        o.frequency.setValueAtTime(90, now + 0.09);
+        g.gain.setValueAtTime(0.22, now);
+        g.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+        o.connect(g); g.connect(ctx.destination);
+        o.start(now); o.stop(now + 0.17);
+        break;
+      }
+      case 4: { // File Phantom: Spectral ghost sweep
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        const f = ctx.createBiquadFilter();
+        o.type = 'sine';
+        o.frequency.setValueAtTime(330, now);
+        o.frequency.exponentialRampToValueAtTime(80, now + 0.26);
+        f.type = 'peaking';
+        f.frequency.setValueAtTime(400, now);
+        f.frequency.linearRampToValueAtTime(100, now + 0.26);
+        f.Q.value = 10;
+        g.gain.setValueAtTime(0.24, now);
+        g.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+        o.connect(f); f.connect(g); g.connect(ctx.destination);
+        o.start(now); o.stop(now + 0.28);
+        break;
+      }
+      default: {
+        // Generic slam
+        playImpactSFX();
+      }
+    }
+  }
+
   // ── Public API ────────────────────────────────────────────
   return {
     playBGM,
@@ -582,6 +885,10 @@ window.AudioManager = (() => {
     // VS Banner SFX
     playSwooshSFX,
     playImpactSFX,
+    // New Action/Attack SFX
+    playPlayerAttackSFX,
+    playByteAttackSFX,
+    playEnemyAttackSFX,
   };
 
 })();
