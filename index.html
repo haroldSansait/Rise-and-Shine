@@ -132,7 +132,7 @@
            aria-label="Main Menu">
 
     <!-- Background: RnS Academy -->
-    <div class="absolute inset-0 bg-cover bg-center bg-no-repeat"
+    <div id="menu-bg" class="absolute inset-0 bg-cover bg-center bg-no-repeat scale-110"
          style="background-image: url('scenes/RnS_Academy.png');"
          aria-hidden="true">
     </div>
@@ -500,7 +500,7 @@
            aria-label="Prelim Arc Stage Map">
 
     <!-- Map background -->
-    <div class="absolute inset-0 bg-cover bg-center bg-no-repeat"
+    <div id="map-bg" class="absolute inset-0 bg-cover bg-center bg-no-repeat scale-110"
          style="background-image: url('scenes/PrelimMap/Prelim_map.png');"
          aria-hidden="true">
     </div>
@@ -514,6 +514,12 @@
       </div>
       <!-- Map action buttons -->
       <div class="flex gap-2">
+        <button id="btn-map-progress"
+                class="pixel-btn px-4 py-2 font-pixel text-[7px] tracking-wider flex items-center justify-center gap-1.5 hidden"
+                style="background:rgba(6,8,20,0.85);border-color:rgba(34,211,238,0.5);color:#9df;"
+                aria-label="Open Arc Selection Screen">
+          <svg class="w-3 h-3 fill-current text-cyan-300 inline-block align-middle" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 4h18v12H3V4zm2 2v8h14V6H5zm4 12h6v2H9v-2z"/></svg> ARCS
+        </button>
         <button id="btn-map-bytes"
                 class="pixel-btn px-4 py-2 font-pixel text-[7px] tracking-wider flex items-center justify-center gap-1.5"
                 style="background:rgba(6,8,20,0.85);border-color:rgba(167,139,250,0.5);color:#c4b5fd;"
@@ -632,6 +638,161 @@
       </div>
     </div>
   </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════
+       SCREEN 11: ARC SELECTION SCREEN
+  ═════════════════════════════════════════════ -->
+  <section id="screen-arc-select"
+           class="screen fixed inset-0 z-10 hidden bg-black select-none"
+           role="region"
+           aria-label="Arc Selection Screen">
+
+    <!-- Parallax background: RnS Academy slightly dimmed -->
+    <div id="arc-select-bg" class="absolute inset-0 bg-cover bg-center bg-no-repeat scale-110 filter brightness-[0.38]"
+         style="background-image: url('scenes/RnS_Academy.png');"
+         aria-hidden="true">
+    </div>
+    
+    <div class="absolute inset-0 bg-black/40" aria-hidden="true"></div>
+
+    <div class="relative z-10 flex flex-col h-full py-8 px-8 select-none">
+      
+      <!-- Top header panel -->
+      <div class="flex items-center justify-between w-full mb-6">
+        <div>
+          <h1 id="arc-select-title" class="font-pixel text-gold text-xs tracking-widest flex items-center gap-1.5" style="font-size: 9px;">
+            <svg class="w-4 h-4 text-cyan-400 fill-current inline-block align-middle" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 4h18v12H3V4zm2 2v8h14V6H5zm4 12h6v2H9v-2z"/></svg>
+            ARC PROGRESS DATABASE
+          </h1>
+          <p class="font-ui text-white/40 text-sm mt-1">LUMEN Core academic zone synchronization status</p>
+        </div>
+        
+        <!-- Back to map button -->
+        <button id="btn-arc-back"
+                class="pixel-btn-secondary px-6 py-2 font-pixel text-gold text-[8px] tracking-widest cursor-pointer active:scale-95 transition-all select-none"
+                aria-label="Back to Prelim Map">
+          ← BACK TO MAP
+        </button>
+      </div>
+
+      <!-- Horizontal row of vertical cards -->
+      <div class="flex-1 flex justify-center items-center gap-6 w-full max-w-5xl mx-auto min-h-0 py-2">
+        
+        <!-- Card 1: Prelim Arc -->
+        <div id="arc-card-prelim" class="arc-card arc-card-active border-gold/30 hover:border-gold/60 cursor-pointer">
+          <div class="relative overflow-hidden w-full h-[160px]">
+            <img src="scenes/PrelimMap/CorruptedClassroom_Prelim.png" alt="Prelim Arc" class="arc-banner-img">
+            <div class="absolute top-2 left-2 bg-emerald-500/90 text-white font-pixel text-[6px] tracking-wider px-1.5 py-0.5 rounded border border-emerald-400/40 shadow-[0_0_8px_rgba(16,185,129,0.4)]">
+              COMPLETED
+            </div>
+          </div>
+          <div class="p-4 flex-1 flex flex-col justify-between">
+            <div>
+              <h3 class="font-pixel text-[9px] text-gold tracking-wide mb-1 leading-relaxed">PRELIM ARC</h3>
+              <p class="font-ui text-white/50 text-xs">The First Awakening</p>
+              <p class="font-ui text-white/70 text-[11px] leading-relaxed mt-2">Purge the initial memory leak and free the school from classroom corruption.</p>
+            </div>
+            <div class="font-pixel text-[7px] text-emerald-400/80 mt-2">
+              ✦ ENTER ZONE
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2: Midterm Arc -->
+        <div id="arc-card-midterm" class="arc-card">
+          <div class="relative overflow-hidden w-full h-[160px]">
+            <img src="scenes/glitchbell_incident/classGlitch_1.png" alt="Midterm Arc" class="arc-banner-img filter brightness-50">
+            <!-- Locked Overlay inside the card -->
+            <div id="midterm-lock-overlay" class="arc-locked-overlay">
+              <svg class="w-8 h-8 fill-current text-zinc-500 mb-2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 4h8v4h2v12H6V8h2V4zm2 4h4V6h-4v2zm-2 4v6h8v-6H8zm2 2h4v2h-4v-2z"/></svg>
+              <span class="font-pixel text-[7px] text-zinc-400 tracking-wider">LOCKED</span>
+            </div>
+            <!-- Unlocked Badge -->
+            <div id="midterm-unlocked-badge" class="absolute top-2 left-2 bg-cyan-500/90 text-white font-pixel text-[6px] tracking-wider px-1.5 py-0.5 rounded border border-cyan-400/40 shadow-[0_0_8px_rgba(34,211,238,0.4)] hidden">
+              COMING SOON
+            </div>
+          </div>
+          <div class="p-4 flex-1 flex flex-col justify-between">
+            <div>
+              <h3 class="font-pixel text-[9px] text-white/25 tracking-wide mb-1 leading-relaxed transition-colors duration-300" id="midterm-card-title">MIDTERM ARC</h3>
+              <p class="font-ui text-white/15 text-xs transition-colors duration-300" id="midterm-card-sub">Data Overload</p>
+              <p class="font-ui text-white/35 text-[11px] leading-relaxed mt-2 transition-colors duration-300" id="midterm-card-desc">Navigate through broken loops, multidimensional arrays, and memory overflows.</p>
+            </div>
+            <div class="font-pixel text-[7px] text-white/25 mt-2 transition-colors duration-300" id="midterm-card-action">
+              🔒 INACTIVE
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3: Pre-Finals Arc -->
+        <div id="arc-card-prefinals" class="arc-card">
+          <div class="relative overflow-hidden w-full h-[160px]">
+            <img src="scenes/PrelimMap/comlab.png" alt="Pre-Finals Arc" class="arc-banner-img filter brightness-50">
+            <div class="arc-locked-overlay">
+              <svg class="w-8 h-8 fill-current text-zinc-500 mb-2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 4h8v4h2v12H6V8h2V4zm2 4h4V6h-4v2zm-2 4v6h8v-6H8zm2 2h4v2h-4v-2z"/></svg>
+              <span class="font-pixel text-[7px] text-zinc-400 tracking-wider">LOCKED</span>
+            </div>
+          </div>
+          <div class="p-4 flex-1 flex flex-col justify-between">
+            <div>
+              <h3 class="font-pixel text-[9px] text-white/25 tracking-wide mb-1 leading-relaxed">PRE-FINALS ARC</h3>
+              <p class="font-ui text-white/15 text-xs">Doubt & Determination</p>
+              <p class="font-ui text-white/20 text-[11px] leading-relaxed mt-2">Recover deep security keys and interface controls in the academic laboratory.</p>
+            </div>
+            <div class="font-pixel text-[7px] text-white/15 mt-2">
+              🔒 INACTIVE
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 4: Finals Arc -->
+        <div id="arc-card-finals" class="arc-card">
+          <div class="relative overflow-hidden w-full h-[160px]">
+            <img src="scenes/glitchbell_incident/rooftopGlitch_3.png" alt="Finals Arc" class="arc-banner-img filter brightness-50">
+            <div class="arc-locked-overlay">
+              <svg class="w-8 h-8 fill-current text-zinc-500 mb-2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 4h8v4h2v12H6V8h2V4zm2 4h4V6h-4v2zm-2 4v6h8v-6H8zm2 2h4v2h-4v-2z"/></svg>
+              <span class="font-pixel text-[7px] text-zinc-400 tracking-wider">LOCKED</span>
+            </div>
+          </div>
+          <div class="p-4 flex-1 flex flex-col justify-between">
+            <div>
+              <h3 class="font-pixel text-[9px] text-white/25 tracking-wide mb-1 leading-relaxed">FINALS ARC</h3>
+              <p class="font-ui text-white/15 text-xs">The Final Sync</p>
+              <p class="font-ui text-white/20 text-[11px] leading-relaxed mt-2">Scale the corrupted rooftop to purge the glitch bell at the center of LUMEN.</p>
+            </div>
+            <div class="font-pixel text-[7px] text-white/15 mt-2">
+              🔒 INACTIVE
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Coming Soon Modal / Popup Overlay -->
+    <div id="arc-coming-soon-overlay"
+         class="hidden absolute inset-0 bg-black/85 z-[99] flex flex-col items-center justify-center p-6 text-center select-none"
+         style="image-rendering: pixelated;">
+      <div class="relative glass-panel max-w-sm w-full p-6 border-2 border-cyan-400/45 shadow-[0_0_40px_rgba(34,211,238,0.22)]">
+        <div class="font-pixel text-[9px] text-cyan-300 tracking-widest mb-4 flex items-center justify-center gap-1.5">
+          <svg class="w-4 h-4 fill-current text-cyan-400 inline-block align-middle" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+          MIDTERM SYSTEM EXPANSION
+          <svg class="w-4 h-4 fill-current text-cyan-400 inline-block align-middle" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+        </div>
+        <p class="font-ui text-white text-sm font-semibold mb-6 max-w-xs leading-relaxed">
+          MIDTERM ARC SYSTEM DETECTED.<br><br>
+          <span class="text-white/60 text-xs uppercase">PURGE COMPLETED. DATA RESTORATION SCHEDULING RUNNING...<br><br>THIS EXPANSION IS COMING SOON!</span>
+        </p>
+        <button id="btn-coming-soon-close" 
+                class="pixel-btn px-10 py-3 font-pixel text-cyan-300 text-[8px] tracking-wider cursor-pointer active:scale-95 transition-all select-none w-full"
+                aria-label="Close notification">
+          DISMISS INTERFACE
+        </button>
+      </div>
+    </div>
+
   </section>
 
   <!-- ════════════════════════════════════════════
@@ -1267,6 +1428,7 @@
   <script src="js/screens/battle.js"></script>
   <script src="js/screens/preloader.js"></script>
   <script src="js/screens/settings.js"></script>
+  <script src="js/screens/arcSelect.js"></script>
   <script src="js/main.js"></script>
 
 </body>

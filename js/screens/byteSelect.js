@@ -29,7 +29,7 @@ window.ByteSelectScreen = (() => {
 
       card.innerHTML = `
         <div class="byte-card-glow"></div>
-        <div class="byte-icon-badge">${byte.icon}</div>
+        <div class="byte-icon-badge">${window.PixelIcons.icon(byte.icon, 'w-6 h-6 inline-block fill-current')}</div>
         <div class="byte-card-img-wrap">
           <img src="${byte.image}" alt="${byte.name}" class="byte-card-img">
         </div>
@@ -146,7 +146,7 @@ window.ByteSelectScreen = (() => {
     skillBadge.classList.remove('hidden');
     skillName.textContent = byte.skill;
     skillBadge.style.borderColor = byte.color + '60';
-    if (skillIcon) skillIcon.textContent = byte.icon;
+    if (skillIcon) skillIcon.innerHTML = window.PixelIcons.icon(byte.icon, 'w-5 h-5 inline-block fill-current');
 
     skillBlock.classList.remove('hidden');
     skillEffect.textContent = byte.skillEffect;

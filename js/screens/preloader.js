@@ -16,6 +16,8 @@ window.PreloaderScreen = (() => {
     'scenes/fields.png',
     'scenes/roomHallway.png',
     'scenes/glitchbell_incident/classGlitch_1.png',
+    'scenes/PrelimMap/comlab.png',
+    'scenes/glitchbell_incident/rooftopGlitch_3.png',
     
     // UI Graphic elements
     'scenes/Extra/RnS Logo [F9C159D].png',

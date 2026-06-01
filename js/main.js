@@ -30,6 +30,7 @@ window.ScreenManager = (() => {
     'cutscene',
     'vs-banner',
     'battle',
+    'arc-select',
   ];
 
   function showOnly(id) {
@@ -106,6 +107,7 @@ window.addEventListener('DOMContentLoaded', () => {
   BattleScreen.init();
   PreloaderScreen.init();
   SettingsScreen.init();
+  ArcSelectScreen.init();
 
   // Boot: start on the preloader screen for centralized asset load tracking
   showFirstScreen();

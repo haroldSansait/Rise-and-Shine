@@ -8,6 +8,7 @@ window.PrelimMapScreen = (() => {
   const icon = (name, className) => window.PixelIcons?.icon(name, className) ?? '';
   let sidebarOpen = false;
   let currentLevel = null;
+  let _sidebarTimerInterval = null;
 
   // ── Build map nodes ───────────────────────────────────────
   function buildNodes() {
@@ -15,9 +16,12 @@ window.PrelimMapScreen = (() => {
     container.innerHTML = '';
 
     levels.forEach(level => {
+      const triesInfo = SaveSystem.getLevelTries(level.id);
+      const isTriesLocked = triesInfo.tries === 0;
+
       const node = document.createElement('div');
       node.id = `map-node-${level.id}`;
-      node.className = `map-node ${level.locked ? 'map-node-locked' : 'map-node-active'} ${level.isBoss ? 'map-node-boss' : ''}`;
+      node.className = `map-node ${level.locked ? 'map-node-locked' : 'map-node-active'} ${level.isBoss ? 'map-node-boss' : ''} ${isTriesLocked ? 'map-node-tries-locked' : ''}`;
       node.style.left = level.position.left;
       node.style.top = level.position.top;
 
@@ -26,7 +30,9 @@ window.PrelimMapScreen = (() => {
           <div class="map-node-ring"></div>
           ${level.locked
           ? `<span class="map-node-lock">${icon('lock', 'w-4 h-4 inline-block align-middle fill-current text-zinc-500/80')}</span>`
-          : `<span class="map-node-num">${level.id}</span>`
+          : (isTriesLocked 
+              ? `<span class="map-node-lock text-red-400">${icon('lock', 'w-4 h-4 inline-block align-middle fill-current')}</span>`
+              : `<span class="map-node-num">${level.id}</span>`)
         }
         </div>
         <div class="map-node-label">
@@ -87,6 +93,11 @@ window.PrelimMapScreen = (() => {
 
   // ── Open sidebar ──────────────────────────────────────────
   function openSidebar(level) {
+    if (_sidebarTimerInterval) {
+      clearInterval(_sidebarTimerInterval);
+      _sidebarTimerInterval = null;
+    }
+
     if (sidebarOpen && currentLevel?.id === level.id) {
       closeSidebar();
       return;
@@ -103,24 +114,49 @@ window.PrelimMapScreen = (() => {
     // Bind ENTER button
     const enterBtn = document.getElementById('btn-sidebar-enter');
     if (enterBtn) {
-      enterBtn.addEventListener('click', () => {
-        AudioManager.playConfirmSFX();
-        const progress = SaveSystem.load().prelimProgress;
-        if (progress >= level.id) {
-          const retryOverlay = document.getElementById('map-retry-confirm-overlay');
-          if (retryOverlay) {
-            retryOverlay.classList.remove('hidden');
-            gsap.fromTo(retryOverlay, { opacity: 0 }, { opacity: 1, duration: 0.25, ease: 'power2.out' });
+      const triesInfo = SaveSystem.getLevelTries(level.id);
+      if (triesInfo.tries > 0) {
+        enterBtn.addEventListener('click', () => {
+          AudioManager.playConfirmSFX();
+          const progress = SaveSystem.load().prelimProgress;
+          if (progress >= level.id) {
+            const retryOverlay = document.getElementById('map-retry-confirm-overlay');
+            if (retryOverlay) {
+              retryOverlay.classList.remove('hidden');
+              gsap.fromTo(retryOverlay, { opacity: 0 }, { opacity: 1, duration: 0.25, ease: 'power2.out' });
 
-            const innerCard = retryOverlay.querySelector('.glass-panel');
-            if (innerCard) {
-              gsap.fromTo(innerCard, { scale: 0.85, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3, ease: 'back.out(1.15)' });
+              const innerCard = retryOverlay.querySelector('.glass-panel');
+              if (innerCard) {
+                gsap.fromTo(innerCard, { scale: 0.85, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3, ease: 'back.out(1.15)' });
+              }
             }
+          } else {
+            launchLevel(level);
           }
-        } else {
-          launchLevel(level);
-        }
-      });
+        });
+      } else {
+        // Starts ticking real-time recharge countdown for 0-tries lock in the sidebar!
+        _sidebarTimerInterval = setInterval(() => {
+          const freshTries = SaveSystem.getLevelTries(level.id);
+          const enterBtnEl = document.getElementById('btn-sidebar-enter');
+
+          if (freshTries.tries > 0) {
+            clearInterval(_sidebarTimerInterval);
+            _sidebarTimerInterval = null;
+            buildNodes(); // update nodes on map
+            openSidebar(level); // refresh sidebar
+            return;
+          }
+
+          if (enterBtnEl) {
+            const mins = Math.floor(freshTries.nextRechargeInMs / 60000);
+            const secs = Math.floor((freshTries.nextRechargeInMs % 60000) / 1000);
+            const minsStr = mins.toString().padStart(2, '0');
+            const secsStr = secs.toString().padStart(2, '0');
+            enterBtnEl.textContent = `RECHARGING: ${minsStr}m ${secsStr}s`;
+          }
+        }, 1000);
+      }
     }
 
     // Animate in
@@ -141,6 +177,11 @@ window.PrelimMapScreen = (() => {
   function closeSidebar() {
     sidebarOpen = false;
     currentLevel = null;
+
+    if (_sidebarTimerInterval) {
+      clearInterval(_sidebarTimerInterval);
+      _sidebarTimerInterval = null;
+    }
 
     gsap.to('#map-sidebar', {
       x: '100%',
@@ -169,6 +210,28 @@ window.PrelimMapScreen = (() => {
       </li>`
     ).join('');
 
+    // Try Limits and Cooldowns sync
+    const triesInfo = SaveSystem.getLevelTries(level.id);
+    let triesBadgeClass = 'tries-badge-green';
+    if (triesInfo.tries === 0) triesBadgeClass = 'tries-badge-red';
+    else if (triesInfo.tries < 3) triesBadgeClass = 'tries-badge-orange';
+
+    const triesBadgeHTML = `
+      <div class="flex items-center justify-between mb-4 mt-1 border-b border-white/5 pb-3">
+        <span class="font-pixel text-[6px] text-white/45 tracking-widest uppercase">Sync Attempts</span>
+        <div class="tries-badge ${triesBadgeClass}" id="sidebar-tries-badge">
+          ${icon('circle', 'w-2 h-2 fill-current mr-1')} ${triesInfo.tries} / 3 TRIES
+        </div>
+      </div>
+    `;
+
+    const isLocked = triesInfo.tries === 0;
+    const btnText = isLocked 
+      ? `RECHARGING...` 
+      : (isBoss ? `${icon('warning', 'w-4 h-4 inline-block align-middle fill-current text-red-500 mr-1')} CHALLENGE BOSS` : `${icon('chevronRight', 'w-4 h-4 inline-block align-middle fill-current mr-1')} ENTER ZONE`);
+    const btnClass = isLocked ? 'pixel-btn opacity-50 cursor-not-allowed w-full py-4 font-pixel text-xs tracking-widest' : 'pixel-btn w-full py-4 font-pixel text-gold text-xs tracking-widest';
+    const btnDisabledAttr = isLocked ? 'disabled' : '';
+
     return `
       <!-- Zone header -->
       <div class="mb-5">
@@ -177,6 +240,9 @@ window.PrelimMapScreen = (() => {
         </div>
         <h2 class="font-pixel text-gold text-base mt-2 leading-relaxed">${level.name}</h2>
       </div>
+
+      <!-- Tries indicator -->
+      ${triesBadgeHTML}
 
       <!-- Zone image -->
       <div class="sidebar-zone-img-wrap mb-5">
@@ -192,7 +258,7 @@ window.PrelimMapScreen = (() => {
       <div class="glass-panel-sm mb-4 p-4" style="border-color: rgba(239,68,68,0.35); background: rgba(30,0,0,0.45);">
         <!-- ENEMY / BOSS label -->
         <div class="font-pixel text-[7px] tracking-widest mb-2 ${isBoss ? 'text-red-400' : 'text-red-400/80'}">
-          ${isBoss ? `${icon('warning', 'w-3.5 h-3.5 inline-block align-middle fill-current text-red-500 mr-1')} ⚠ STAGE BOSS` : '⚔ ENEMY'}
+          ${isBoss ? `${icon('warning', 'w-3.5 h-3.5 inline-block align-middle fill-current text-red-500 mr-1')} ⚠ STAGE BOSS` : `${icon('sword', 'w-3.5 h-3.5 inline-block align-middle fill-current text-red-400 mr-1')} ENEMY`}
         </div>
         <!-- Enemy name -->
         <div class="font-ui font-extrabold text-white text-lg leading-tight mb-3">${level.enemy}</div>
@@ -232,14 +298,25 @@ window.PrelimMapScreen = (() => {
       ` : ''}
 
       <!-- Action -->
-      <button id="btn-sidebar-enter" class="pixel-btn w-full py-4 font-pixel text-gold text-xs tracking-widest">
-        ${isBoss ? `${icon('warning', 'w-4 h-4 inline-block align-middle fill-current text-red-500 mr-1')} CHALLENGE BOSS` : `${icon('chevronRight', 'w-4 h-4 inline-block align-middle fill-current mr-1')} ENTER ZONE`}
+      <button id="btn-sidebar-enter" class="${btnClass}" ${btnDisabledAttr}>
+        ${btnText}
       </button>
     `;
   }
 
   // ── Generic Level Launch (cutscene → VS → battle) ─────────
   function launchLevel(level) {
+    // Consume a try from save first
+    const success = SaveSystem.consumeTry(level.id);
+    if (!success) {
+      AudioManager.playErrorSFX();
+      alert("No tries left for this level! Waiting for recharge.");
+      return;
+    }
+
+    // Refresh nodes on map to show new tries count immediately
+    buildNodes();
+
     // Persist the level data so battle.js and post-battle flows can access it
     window.GameState.currentLevel = level;
 
@@ -318,7 +395,7 @@ window.PrelimMapScreen = (() => {
 
       if (isUnlocked) {
         card.innerHTML = `
-          <div class="byte-card-icon" style="color:${byte.color};">${byte.icon}</div>
+          <div class="byte-card-icon" style="color:${byte.color};">${icon(byte.icon, 'w-6 h-6 inline-block fill-current')}</div>
           <div class="byte-card-img-wrap">
             <img src="${byte.image}" alt="${byte.name}" class="byte-card-img" onerror="this.style.opacity=0.3">
           </div>
@@ -440,6 +517,11 @@ window.PrelimMapScreen = (() => {
     sidebarOpen = false;
     currentLevel = null;
 
+    if (_sidebarTimerInterval) {
+      clearInterval(_sidebarTimerInterval);
+      _sidebarTimerInterval = null;
+    }
+
     // Apply save data (level locks, byte from save)
     SaveSystem.applyToGameState();
 
@@ -461,8 +543,8 @@ window.PrelimMapScreen = (() => {
     // Animate map in
     const tl = gsap.timeline();
     tl.fromTo('#screen-prelim-map .absolute.bg-cover',
-      { scale: 1.05, opacity: 0 },
-      { scale: 1, opacity: 1, duration: 1.2, ease: 'power2.out' }
+      { scale: 1.15, opacity: 0 },
+      { scale: 1.1, opacity: 1, duration: 1.2, ease: 'power2.out' }
     )
       .fromTo('#map-header-panel',
         { opacity: 0, y: -20 },
@@ -482,6 +564,23 @@ window.PrelimMapScreen = (() => {
     const closeBtn = document.getElementById('btn-close-sidebar');
     if (closeBtn) {
       closeBtn.onclick = closeSidebar;
+    }
+
+    // ARCS Progress button (for Arc Select Screen)
+    const progressBtn = document.getElementById('btn-map-progress');
+    if (progressBtn) {
+      const saveData = SaveSystem.load();
+      if (saveData.prelimProgress >= 5) {
+        progressBtn.classList.remove('hidden');
+        progressBtn.onclick = () => {
+          AudioManager.playConfirmSFX();
+          window.ScreenManager.goTo('arc-select', {
+            onEnter: () => ArcSelectScreen.enter(false)
+          });
+        };
+      } else {
+        progressBtn.classList.add('hidden');
+      }
     }
 
     // Bytes panel buttons
@@ -627,7 +726,7 @@ window.PrelimMapScreen = (() => {
         <!-- Byte large graphic or icon -->
         <div class="w-28 h-28 flex items-center justify-center mb-5 rounded-full border border-white/10 relative bg-black/40">
           <div class="absolute inset-0 flex items-center justify-center text-4xl select-none" style="filter: drop-shadow(0 0 10px ${byte.color});">
-            ${byte.icon}
+            ${icon(byte.icon, 'w-12 h-12 inline-block fill-current')}
           </div>
           <img src="${byte.image}" alt="${byte.name}" class="w-20 h-20 object-contain z-10" onerror="this.style.opacity=0">
         </div>
@@ -728,7 +827,7 @@ window.PrelimMapScreen = (() => {
         <!-- Byte Header -->
         <div class="flex flex-col items-center text-center mb-6">
           <div class="text-3xl mb-2" style="filter: drop-shadow(0 0 8px ${isUnlocked ? byte.color : 'transparent'});">
-            ${isUnlocked ? byte.icon : icon('lock', 'w-7 h-7 inline-block align-middle fill-current text-zinc-500')}
+            ${isUnlocked ? icon(byte.icon, 'w-10 h-10 inline-block fill-current') : icon('lock', 'w-7 h-7 inline-block align-middle fill-current text-zinc-500')}
           </div>
           <h2 class="font-pixel text-lg mb-1 tracking-wide" style="color: ${isUnlocked ? byte.color : '#94a3b8'}">
             ${isUnlocked ? byte.name.toUpperCase() : '??? BYTE'}
@@ -1004,7 +1103,24 @@ window.PrelimMapScreen = (() => {
   }
 
   function init() {
-    // Nothing static needed — enter() builds everything
+    const screenEl = document.getElementById('screen-prelim-map');
+    const bgEl     = document.getElementById('map-bg');
+    if (screenEl && bgEl) {
+      screenEl.addEventListener('mousemove', (e) => {
+        const { clientX: x, clientY: y } = e;
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        const moveX = (x / w - 0.5) * -20;
+        const moveY = (y / h - 0.5) * -20;
+        
+        gsap.to(bgEl, {
+          x: moveX,
+          y: moveY,
+          duration: 0.6,
+          ease: 'power2.out'
+        });
+      });
+    }
   }
 
   return { init, enter };

@@ -18,6 +18,17 @@ window.PixelIcons = (() => {
     sliders: 'M4 5h10v2H4V5zm12 0h4v2h-4V5zM4 11h4v2H4v-2zm6 0h10v2H10v-2zM4 17h12v2H4v-2zm14 0h2v2h-2v-2zM14 3h2v6h-2V3zM8 9h2v6H8V9zm8 6h2v6h-2v-6z',
     page: 'M5 2h10v2h2v2h2v16H5V2zm2 2v16h10V8h-4V4H7zm2 8h6v2H9v-2zm0 4h6v2H9v-2z',
     screen: 'M3 4h18v12H3V4zm2 2v8h14V6H5zm4 12h6v2H9v-2z',
+    antenna: 'M11 2h2v4h-2V2zm-5 6h12v2H6V8zm2 4h8v2H8v-2zm3 4h2v4h-2v-4zm-5 4h12v2H6v-2z',
+    bug: 'M8 6h8v2H8V6zm-2 4h12v2H6v-2zm0 4h12v2H6v-2zm2 4h8v2H8v-2zm-4-8h2v10H4V10zm14 0h2v10h-2V10z',
+    shield: 'M4 4h16v6h-2v4h-2v4h-2v2h-2v-2h-2v-4H6v-4H4V4zm2 2v4h2v4h2v2h4v-2h2v-4h2V6H6z',
+    circle: 'M9 4h6v2H9V4zm-4 4h14v2H5V8zm-2 4h18v2H3v-2zm2 4h14v2H5v-2zm4 4h6v2H9v-2z',
+    fire: 'M11 2h2v4h-2V2zm-3 6h6v2H8V8zm-2 4h10v2H6v-2zm-2 4h14v2H4v-2zm4 4h8v2H8v-2z',
+    key: 'M10 4h4v6h-4V4zm-2 2h8v2H8V6zm6 6h2v6h-2v-6zm-2 2h2v2h-2v-2zm0 4h4v2h-4v-2zm-3-4h3v2h-3v-2zm0-4h3v2h-3v-2z',
+    water: 'M11 4h2v2h-2V4zm-2 8h6v2H9V8zm-2 4h10v2H7v-2zm-2 4h14v2H5v-2zm2 4h10v2H7v-2z',
+    moon: 'M9 4h6v2H9V4zm-4 4h14v2H5V8zm-2 4h18v2H3v-2zm2 4h14v2H5v-2zm4 4h6v2H9v-2z',
+    dice: 'M4 4h16v16H4V4zm2 2v12h12V6H6zm2 2h2v2H8V8zm6 0h2v2h-2V8zm-3 3h2v2h-2v-2zm-3 3h2v2H8v-2zm6 0h2v2h-2v-2z',
+    star: 'M11 2h2v3h-2V2zm-2 3h6v2H9V5zm-5 4h14v2H4V9zm-2 2h18v2H2v-1zm4 3h12v2H6v-2zm2 2h8v2H8v-2zm3 2h2v2h-2v-2z',
+    bulb: 'M9 4h6v2H9V4zm-3 4h12v2H6V8zm-2 4h14v2H4v-2zm2 4h10v2H6v-2zm5 4h2v2h-2v-2z',
   };
 
   function icon(name, className = 'w-5 h-5 inline-block align-middle fill-current') {

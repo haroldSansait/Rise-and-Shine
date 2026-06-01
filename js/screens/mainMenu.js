@@ -12,6 +12,25 @@ window.MainMenuScreen = (() => {
     _initialized = true;
 
     const btnStart = document.getElementById('btn-start');
+    const screenEl = document.getElementById('screen-main-menu');
+    const bgEl     = document.getElementById('menu-bg');
+
+    if (screenEl && bgEl) {
+      screenEl.addEventListener('mousemove', (e) => {
+        const { clientX: x, clientY: y } = e;
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        const moveX = (x / w - 0.5) * -20;
+        const moveY = (y / h - 0.5) * -20;
+        
+        gsap.to(bgEl, {
+          x: moveX,
+          y: moveY,
+          duration: 0.6,
+          ease: 'power2.out'
+        });
+      });
+    }
 
     // ── Button hover ─────────────────────────────────────
     btnStart.addEventListener('mouseenter', () => {

@@ -28,6 +28,13 @@ window.SaveSystem = (() => {
         4: true,
         5: true,
       },
+      levelTries: {
+        1: { tries: 3, lastRechargeTime: null },
+        2: { tries: 3, lastRechargeTime: null },
+        3: { tries: 3, lastRechargeTime: null },
+        4: { tries: 3, lastRechargeTime: null },
+        5: { tries: 3, lastRechargeTime: null },
+      },
     };
   }
 
@@ -44,6 +51,14 @@ window.SaveSystem = (() => {
 
       // Deep-merge nested save sections so older saves cannot drop new levels.
       data.levelLocks = Object.assign({}, defaultLocks, parsed.levelLocks ?? {});
+
+      // Deep-merge levelTries
+      data.levelTries = {};
+      const defaultTries = defaults.levelTries;
+      const parsedTries = parsed.levelTries ?? {};
+      for (let i = 1; i <= 5; i++) {
+        data.levelTries[i] = Object.assign({}, defaultTries[i], parsedTries[i] ?? {});
+      }
 
       // Keep starter bytes available even if an older/corrupt save omits them.
       const unlocked = Array.isArray(parsed.unlockedBytes) ? parsed.unlockedBytes : defaultUnlockedBytes;
@@ -237,6 +252,82 @@ window.SaveSystem = (() => {
     });
   }
 
+  /** Get level tries remaining and dynamic recharge details. Cooldown is 30 mins (1,800,000 ms) per try. */
+  function getLevelTries(levelId) {
+    const data = load();
+    if (!data.levelTries || !data.levelTries[levelId]) {
+      if (!data.levelTries) data.levelTries = {};
+      data.levelTries[levelId] = { tries: 3, lastRechargeTime: null };
+      save(data);
+    }
+
+    const tData = data.levelTries[levelId];
+    let tries = tData.tries;
+    let lastRechargeTime = tData.lastRechargeTime;
+
+    const COOLDOWN = 1800000; // 30 minutes in ms
+
+    if (tries < 3 && lastRechargeTime !== null) {
+      const now = Date.now();
+      const elapsed = now - lastRechargeTime;
+      const recharged = Math.floor(elapsed / COOLDOWN);
+
+      if (recharged > 0) {
+        tries = Math.min(3, tries + recharged);
+        if (tries === 3) {
+          lastRechargeTime = null;
+        } else {
+          lastRechargeTime = lastRechargeTime + (recharged * COOLDOWN);
+        }
+        tData.tries = tries;
+        tData.lastRechargeTime = lastRechargeTime;
+        save(data);
+      }
+    }
+
+    let nextRechargeInMs = 0;
+    if (tries < 3 && lastRechargeTime !== null) {
+      const elapsed = Date.now() - lastRechargeTime;
+      nextRechargeInMs = Math.max(0, COOLDOWN - (elapsed % COOLDOWN));
+    }
+
+    return { tries, nextRechargeInMs };
+  }
+
+  /** Consume a try from a level (drops tries by 1, starts recharge timer). Returns success boolean. */
+  function consumeTry(levelId) {
+    // First, sync/calculate dynamic recharge
+    const info = getLevelTries(levelId);
+    if (info.tries <= 0) return false;
+
+    const data = load();
+    const tData = data.levelTries[levelId];
+
+    // Decrement try
+    tData.tries = info.tries - 1;
+
+    // Start recharge timer if it wasn't already running
+    if (tData.tries < 3 && tData.lastRechargeTime === null) {
+      tData.lastRechargeTime = Date.now();
+    }
+
+    save(data);
+    return true;
+  }
+
+  /** Reset all tries to 3 and clear timestamps. */
+  function resetAllTries() {
+    const data = load();
+    data.levelTries = {
+      1: { tries: 3, lastRechargeTime: null },
+      2: { tries: 3, lastRechargeTime: null },
+      3: { tries: 3, lastRechargeTime: null },
+      4: { tries: 3, lastRechargeTime: null },
+      5: { tries: 3, lastRechargeTime: null },
+    };
+    save(data);
+  }
+
   return {
     load,
     save,
@@ -257,6 +348,9 @@ window.SaveSystem = (() => {
     markBytesTutorialCompleted,
     isBytesTutorialCompleted,
     applyToGameState,
+    getLevelTries,
+    consumeTry,
+    resetAllTries,
   };
 
 })();

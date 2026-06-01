@@ -118,7 +118,7 @@ window.BattleScreen = (() => {
     if (!overlay) { onDismiss(); return; }
 
     // Read icon and color from the byte data object directly
-    const icon         = byte.icon ?? '⚡';
+    const icon         = byte.icon ?? 'lightning';
     const byteColor    = byte.color ?? '#22d3ee';
     const chargesNeeded = byte.id === 'poturtle' ? 3 : 4;
 
@@ -133,7 +133,7 @@ window.BattleScreen = (() => {
     } else {
       if (introImgEl) introImgEl.classList.add('hidden');
       if (introIconEl) {
-        introIconEl.textContent = icon;
+        introIconEl.innerHTML = window.PixelIcons.icon(icon, 'w-12 h-12 inline-block fill-current');
         introIconEl.classList.remove('hidden');
       }
     }
@@ -141,8 +141,8 @@ window.BattleScreen = (() => {
     document.getElementById('byte-intro-role').textContent        = byte.roleDesc ?? 'Byte Companion';
     document.getElementById('byte-intro-skill-name').textContent  = byte.skill ?? 'Special Skill';
     document.getElementById('byte-intro-skill-effect').textContent = byte.skillEffect ?? '';
-    document.getElementById('byte-intro-charge-line').textContent =
-      `⚡ CHARGES NEEDED: ${chargesNeeded} correct answers`;
+    document.getElementById('byte-intro-charge-line').innerHTML =
+      `${window.PixelIcons.icon('lightning', 'w-3.5 h-3.5 inline-block align-middle fill-current text-purple-300 mr-1.5')} CHARGES NEEDED: ${chargesNeeded} correct answers`;
     document.getElementById('byte-intro-role-desc').textContent   =
       `Answer correctly to charge ${byte.name}'s skill. Once ready, tap the SKILL button next to your companion to unleash it!`;
 
@@ -242,13 +242,13 @@ window.BattleScreen = (() => {
         badge: null
       },
       {
-        title: '❤ YOUR HP FUSION SYSTEM ❤',
-        text: `Your life force is shown as Heart Containers at the top of the screen. Each heart = 10 HP. Your Max HP is a FUSION of your hero\'s HP and your Byte companion\'s HP combined. HP carries over between zones — protect it carefully!`,
+        title: `${window.PixelIcons.icon('heart', 'w-4 h-4 text-red-500 fill-current inline-block align-middle mr-1.5')} YOUR HP FUSION SYSTEM ${window.PixelIcons.icon('heart', 'w-4 h-4 text-red-500 fill-current inline-block align-middle ml-1.5')}`,
+        text: `Your life force is shown as Heart Containers at the top of the screen. Each heart = 10 HP. Your Max HP is a FUSION of your hero's HP and your Byte companion's HP combined. HP carries over between zones — protect it carefully!`,
         highlight: 'player-hearts-container',
         badge: null
       },
       {
-        title: '⚔️ HERO PASSIVE ABILITY ⚔️',
+        title: `${window.PixelIcons.icon('sword', 'w-4 h-4 text-orange-400 fill-current inline-block align-middle mr-1.5')} HERO PASSIVE ABILITY ${window.PixelIcons.icon('sword', 'w-4 h-4 text-orange-400 fill-current inline-block align-middle ml-1.5')}`,
         text: `Every hero has a unique passive ability that activates automatically during battle. Your hero ${char?.name ?? 'hero'} has the passive "${char?.passiveName ?? 'Hero Passive'}". Check the ALLY INFO PANEL on the left to read your passive description!`,
         highlight: 'battle-player-passive-box',
         badge: 'passive',
@@ -256,13 +256,13 @@ window.BattleScreen = (() => {
         passiveEffect: char?.passiveDesc ?? 'Your hero passive activates automatically in battle.'
       },
       {
-        title: '⚡ COOPERATIVE ATTACKS ⚡',
+        title: `${window.PixelIcons.icon('lightning', 'w-4 h-4 text-yellow-400 fill-current inline-block align-middle mr-1.5')} COOPERATIVE ATTACKS ${window.PixelIcons.icon('lightning', 'w-4 h-4 text-yellow-400 fill-current inline-block align-middle ml-1.5')}`,
         text: 'Select an answer and hit SUBMIT. A CORRECT answer triggers a synchronized attack — your hero and your Byte companion both strike the enemy dealing their combined Sync damage. WRONG answers or running out of time lets the enemy attack you!',
         highlight: 'battle-question',
         badge: null
       },
       {
-        title: '🌟 YOUR BYTE COMPANION SKILL 🌟',
+        title: `${window.PixelIcons.icon('star', 'w-4 h-4 text-yellow-300 fill-current inline-block align-middle mr-1.5')} YOUR BYTE COMPANION SKILL ${window.PixelIcons.icon('star', 'w-4 h-4 text-yellow-300 fill-current inline-block align-middle ml-1.5')}`,
         text: `Your companion Byte ${byte?.name ?? 'Byte'} has a special skill that charges as you answer correctly. Every correct answer adds 1 charge. Once fully charged, the SKILL button next to your Byte lights up purple — tap it to unleash their power!`,
         highlight: 'btn-byte-skill',
         badge: 'skill',
@@ -270,13 +270,13 @@ window.BattleScreen = (() => {
         skillEffect: byte?.skillEffect ?? 'A powerful ability that turns the tide of battle.'
       },
       {
-        title: '📡 SKILL CHARGE MECHANIC 📡',
+        title: `${window.PixelIcons.icon('antenna', 'w-4 h-4 text-purple-400 fill-current inline-block align-middle mr-1.5')} SKILL CHARGE MECHANIC ${window.PixelIcons.icon('antenna', 'w-4 h-4 text-purple-400 fill-current inline-block align-middle ml-1.5')}`,
         text: `Watch the SKILL button next to your Byte. Each correct answer fills 1 charge. Your Byte needs ${byte?.id === 'poturtle' ? 3 : 4} correct answers to fully charge. Use the skill at the right moment for maximum impact — it resets after use!`,
         highlight: 'wrapper-byte-skill',
         badge: null
       },
       {
-        title: '💡 INTELLIGENCE REVEAL 💡',
+        title: `${window.PixelIcons.icon('bulb', 'w-4 h-4 text-cyan-300 fill-current inline-block align-middle mr-1.5')} INTELLIGENCE REVEAL ${window.PixelIcons.icon('bulb', 'w-4 h-4 text-cyan-300 fill-current inline-block align-middle ml-1.5')}`,
         text: 'Stuck on a tough IT question? Click the cyan REVEAL button to automatically highlight and select the correct answer. You only have 2 Reveals for the entire Prelim Arc, so use them wisely on questions you truly cannot answer!',
         highlight: 'btn-battle-reveal',
         badge: null
@@ -329,7 +329,7 @@ window.BattleScreen = (() => {
     const skillBadge   = document.getElementById('battle-tutorial-skill-badge');
     const passiveBadge = document.getElementById('battle-tutorial-passive-badge');
 
-    if (titleEl) titleEl.textContent = slide.title;
+    if (titleEl) titleEl.innerHTML = slide.title;
     if (textEl)  textEl.textContent  = slide.text;
 
     // Show/hide the byte skill badge
@@ -338,7 +338,7 @@ window.BattleScreen = (() => {
         skillBadge.classList.remove('hidden');
         const nameEl   = document.getElementById('battle-tutorial-skill-name');
         const effectEl = document.getElementById('battle-tutorial-skill-effect');
-        if (nameEl)   nameEl.textContent   = `⚡ ${slide.skillName}`;
+        if (nameEl)   nameEl.innerHTML   = `${window.PixelIcons.icon('lightning', 'w-3.5 h-3.5 inline-block mr-1.5')}${slide.skillName}`;
         if (effectEl) effectEl.textContent = slide.skillEffect;
       } else {
         skillBadge.classList.add('hidden');
@@ -1181,33 +1181,120 @@ window.BattleScreen = (() => {
     _stopQuestionTimer();
     _stopIdleLoop();
 
+    const triesInfo = SaveSystem.getLevelTries(_levelData.id);
+
     const ov = document.createElement('div');
     ov.style.cssText =
-      'position:absolute;inset:0;background:rgba(0,0,0,0.82);' +
+      'position:absolute;inset:0;background:rgba(0,0,0,0.85);' +
       'display:flex;flex-direction:column;align-items:center;' +
       'justify-content:center;z-index:40;';
-    ov.innerHTML = `
-      <div class="font-pixel text-red-400 mb-4" style="font-size:26px;">DEFEATED</div>
-      <div class="font-ui text-white/55 text-base mb-6">Your HP dropped to zero.</div>
-      <button id="btn-battle-retry"
-              class="pixel-btn px-10 py-3 font-pixel text-gold tracking-widest"
-              style="font-size:8px;"
-              aria-label="Retry this level">
-        ↺ RETRY
-      </button>
-    `;
-    document.getElementById('screen-battle').appendChild(ov);
-    gsap.fromTo(ov, { opacity: 0 }, { opacity: 1, duration: 0.45 });
 
-    document.getElementById('btn-battle-retry').addEventListener('click', () => {
-      ov.remove();
-      // Reset carry-over HP on defeat — start fresh
-      window.GameState.playerHp = null;
-      // Reset byte charge on defeat — losing forfeits all accumulated charge
-      window.GameState.byteCharge = 0;
-      SaveSystem.saveByteCharge(0);
-      enter(_levelData);
-    });
+    if (triesInfo.tries > 0) {
+      let triesBadgeClass = 'tries-badge-green';
+      if (triesInfo.tries === 0) triesBadgeClass = 'tries-badge-red';
+      else if (triesInfo.tries < 3) triesBadgeClass = 'tries-badge-orange';
+
+      ov.innerHTML = `
+        <div class="font-pixel text-red-500 mb-4 animate-pulse" style="font-size:26px;text-shadow:0 0 20px rgba(239,68,68,0.5);">DEFEATED</div>
+        <div class="font-ui text-white/70 text-sm mb-4">Your core HP has collapsed!</div>
+        
+        <div class="tries-badge ${triesBadgeClass} mb-6">
+          ${triesInfo.tries} / 3 RETRIES REMAINING
+        </div>
+
+        <div class="flex gap-4">
+          <button id="btn-battle-retry"
+                  class="pixel-btn px-8 py-3.5 font-pixel text-gold text-[8px] tracking-widest"
+                  aria-label="Continue battle by spending 1 try">
+            ✦ CONTINUE BATTLE
+          </button>
+          <button id="btn-battle-flee"
+                  class="pixel-btn-secondary px-8 py-3.5 font-pixel text-[8px] tracking-widest"
+                  aria-label="Flee back to map">
+            FLEE TO MAP
+          </button>
+        </div>
+      `;
+      document.getElementById('screen-battle').appendChild(ov);
+      gsap.fromTo(ov, { opacity: 0 }, { opacity: 1, duration: 0.45 });
+
+      document.getElementById('btn-battle-retry').addEventListener('click', () => {
+        ov.remove();
+        // Consume another try
+        const consumed = SaveSystem.consumeTry(_levelData.id);
+        if (consumed) {
+          // Restore player HP to full
+          _playerHp = _playerMaxHp;
+          window.GameState.playerHp = _playerMaxHp;
+          _updatePlayerHpUI();
+
+          // Play a healing chime
+          AudioManager.playHealSFX();
+
+          // Clear animation block and resume battle loops
+          _isAnimating = false;
+          _startIdleLoop();
+          
+          // Advance to the next question to reset button states and clear visual locks
+          _advanceQuestionFlow();
+        } else {
+          // Backup fallback
+          window.ScreenManager.goTo('prelim-map', {
+            onEnter: () => PrelimMapScreen.enter()
+          });
+        }
+      });
+
+      document.getElementById('btn-battle-flee').addEventListener('click', () => {
+        ov.remove();
+        // Fleeing from defeat: Start fresh on next entry, reset carry-over HP
+        window.GameState.playerHp = null;
+        window.GameState.byteCharge = 0;
+        SaveSystem.saveByteCharge(0);
+
+        window.ScreenManager.goTo('prelim-map', {
+          onEnter: () => PrelimMapScreen.enter()
+        });
+      });
+
+    } else {
+      ov.innerHTML = `
+        <div class="font-pixel text-red-500 mb-4 animate-pulse" style="font-size:26px;text-shadow:0 0 20px rgba(239,68,68,0.5);">DEFEATED</div>
+        <div class="font-ui text-white/70 text-sm mb-4">Your core HP has collapsed!</div>
+        
+        <div class="tries-badge tries-badge-red mb-6 uppercase">
+          0 / 3 attempts remaining (locked)
+        </div>
+        
+        <p class="font-ui text-red-400/80 text-xs mb-6 max-w-xs leading-relaxed uppercase">
+          SYSTEM INTERFACES COLLAPSED. RETRY COOLDOWN RUNNING. THIS ZONE IS NOW TEMPORARILY LOCKED.
+        </p>
+
+        <button id="btn-battle-flee"
+                class="pixel-btn px-10 py-3.5 font-pixel text-gold text-[8px] tracking-widest"
+                aria-label="Return to map">
+          RETURN TO MAP
+        </button>
+      `;
+      document.getElementById('screen-battle').appendChild(ov);
+      gsap.fromTo(ov, { opacity: 0 }, { opacity: 1, duration: 0.45 });
+
+      document.getElementById('btn-battle-flee').addEventListener('click', () => {
+        ov.remove();
+        // Start fresh next time, reset carry-over HP
+        window.GameState.playerHp = null;
+        window.GameState.byteCharge = 0;
+        SaveSystem.saveByteCharge(0);
+
+        window.ScreenManager.goTo('prelim-map', {
+          onEnter: () => {
+            if (window.PrelimMapScreen && typeof window.PrelimMapScreen.enter === 'function') {
+              window.PrelimMapScreen.enter();
+            }
+          }
+        });
+      });
+    }
   }
 
   // ── Post-battle cutscene (dynamic per level) ─────────────
@@ -1220,10 +1307,17 @@ window.BattleScreen = (() => {
 
     window.ScreenManager.goTo('cutscene', {
       onEnter: () => CutsceneScreen.playScene(lines, () => {
-        // Return to prelim map and refresh node locks
-        window.ScreenManager.goTo('prelim-map', {
-          onEnter: () => PrelimMapScreen.enter()
-        });
+        if (_levelData?.id === 5) {
+          // Boss cleared — transition to Arc Selection screen playing the unlock cinematic!
+          window.ScreenManager.goTo('arc-select', {
+            onEnter: () => ArcSelectScreen.enter(true)
+          });
+        } else {
+          // Return to prelim map and refresh node locks
+          window.ScreenManager.goTo('prelim-map', {
+            onEnter: () => PrelimMapScreen.enter()
+          });
+        }
       })
     });
   }
@@ -1795,8 +1889,8 @@ window.BattleScreen = (() => {
 
     if (playerCardName) playerCardName.textContent = charName;
     if (playerRole) playerRole.textContent = char?.role ?? 'Hero';
-    if (playerStatHp) playerStatHp.textContent = `❤ Max HP: ${_playerMaxHp}`;
-    if (playerStatSync) playerStatSync.textContent = `⚡ Sync: ${char?.dmg ?? 0}`;
+    if (playerStatHp) playerStatHp.innerHTML = `${window.PixelIcons.icon('heart', 'w-3.5 h-3.5 inline-block text-red-500 fill-current mr-1.5')}Max HP: ${_playerMaxHp}`;
+    if (playerStatSync) playerStatSync.innerHTML = `${window.PixelIcons.icon('lightning', 'w-3.5 h-3.5 inline-block text-yellow-400 fill-current mr-1.5')}Sync: ${char?.dmg ?? 0}`;
     if (playerPassiveName) {
       playerPassiveName.textContent = char?.passiveName ?? 'None';
       const charThemes = {
@@ -1922,6 +2016,18 @@ window.BattleScreen = (() => {
     if (quitBtn && quitOverlay) {
       quitBtn.addEventListener('click', () => {
         AudioManager.playClickSFX();
+        
+        // Dynamically fetch tries remaining for warning description copy
+        const triesInfo = SaveSystem.getLevelTries(_levelData.id);
+        const descPara = quitOverlay.querySelector('p');
+        if (descPara) {
+          descPara.innerHTML = `
+            ARE YOU SURE YOU WANT TO FLEE BACK TO THE PRELIM MAP?<br>
+            <span class="text-yellow-400 font-pixel text-[6px] mt-2 block tracking-wider uppercase">YOU WILL HAVE ${triesInfo.tries} TRIES REMAINING FOR THIS ZONE</span>
+            <span class="text-white/35 text-[11px] mt-2 block font-normal">(ALL CURRENT BATTLE PROGRESS WILL BE LOST)</span>
+          `;
+        }
+
         quitOverlay.classList.remove('hidden');
         
         // Fade in the dimmed background overlay
