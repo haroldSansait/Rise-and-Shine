@@ -43,6 +43,15 @@ window.VSBannerScreen = (() => {
     const enemyNameEl = document.getElementById('vs-enemy-name');
     if (enemyNameEl) enemyNameEl.textContent = enemyName;
 
+    const enemySubEl = document.getElementById('vs-enemy-sub');
+    if (enemySubEl) {
+      if (currentLevel?.isBoss) {
+        enemySubEl.textContent = 'Prelim Stage Boss';
+      } else {
+        enemySubEl.textContent = 'Enemy Byte';
+      }
+    }
+
     // ── Reset positions via GSAP so re-entries work ────────
     gsap.set('#vs-player-side',  { x: '-120vw', opacity: 1 });
     gsap.set('#vs-enemy-side',   { x:  '120vw', opacity: 1 });

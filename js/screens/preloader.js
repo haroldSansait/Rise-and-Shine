@@ -15,6 +15,7 @@ window.PreloaderScreen = (() => {
     'scenes/classroom.png',
     'scenes/fields.png',
     'scenes/roomHallway.png',
+    'scenes/glitchbell_incident/classGlitch_1.png',
     
     // UI Graphic elements
     'scenes/Extra/RnS Logo [F9C159D].png',
@@ -51,6 +52,14 @@ window.PreloaderScreen = (() => {
     'playableCharacters/Bai/battle_sprites/Bai_battle.png',
     'playableCharacters/Dale/idle_sprites/Dale_idle.png',
     'playableCharacters/Dale/battle_sprites/Dale_battle.png',
+    'playableCharacters/Paps/idle_sprites/Paps_idle.png',
+    'playableCharacters/Paps/battle_sprites/Paps_battle.png',
+    'playableCharacters/Bebz/idle_sprites/Bebz_idle.png',
+    'playableCharacters/Bebz/battle_sprites/Bebz_battle.png',
+    'playableCharacters/Matt/idle_sprites/Matt_idle.png',
+    'playableCharacters/Matt/battle_sprites/Matt_battle.png',
+    'playableCharacters/JB/idle_sprites/JB_idle.png',
+    'playableCharacters/JB/battle_sprites/JB_battle.png',
 
     // Byte Sprite Sheets (idle & attack)
     'bytes/Pinglet/Pinglet_idle.png',
@@ -65,6 +74,16 @@ window.PreloaderScreen = (() => {
     'bytes/Firewisp/Firewisp_attack.png',
     'bytes/Lagoon/Lagoon_idle.png',
     'bytes/Lagoon/Lagoon_attack.png',
+
+    // Enemy Glitchborn Byte Sprite Sheets (idle & attack)
+    'glitchbornBytes/Bitmite/bitmite_idle.png',
+    'glitchbornBytes/Bitmite/Bitmite_attack.png',
+    'glitchbornBytes/CacheSlime/CacheSlime_idle.png',
+    'glitchbornBytes/CacheSlime/CacheSlime_Attack.png',
+    'glitchbornBytes/SyntaxSprout/syntaxsprout_idle.png',
+    'glitchbornBytes/SyntaxSprout/SyntaxSprout_attack.png',
+    'glitchbornBytes/FilePhantom/FilePhantom_Idle.png',
+    'glitchbornBytes/FilePhantom/FilePhantom_Attack.png',
   ];
 
   const audioTracks = [
