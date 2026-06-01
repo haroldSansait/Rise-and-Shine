@@ -42,6 +42,16 @@ window.ScreenManager = (() => {
         el.classList.add('hidden');
       }
     });
+
+    // Toggle global version badge: only on main-menu and prelim-map
+    const badge = document.getElementById('global-version-badge');
+    if (badge) {
+      if (id === 'main-menu' || id === 'prelim-map') {
+        badge.classList.remove('hidden');
+      } else {
+        badge.classList.add('hidden');
+      }
+    }
   }
 
   async function goTo(targetId, opts = {}) {

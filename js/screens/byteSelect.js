@@ -22,7 +22,9 @@ window.ByteSelectScreen = (() => {
       const isActive = idx === 0;
       const card = document.createElement('div');
       card.id = `byte-card-${idx}`;
-      card.className = `byte-card ${isActive ? 'byte-card-active' : 'byte-card-inactive'}`;
+      card.className = `byte-card ${isActive 
+        ? 'byte-card-active w-[170px] short:w-[130px] xshort:w-[110px]' 
+        : 'byte-card-inactive w-[130px] short:w-[100px] xshort:w-[85px]'}`;
       card.dataset.idx = idx;
 
       card.innerHTML = `
@@ -64,10 +66,14 @@ window.ByteSelectScreen = (() => {
     bytes.forEach((byte, i) => {
       const card = document.getElementById(`byte-card-${i}`);
       if (!card) return;
-      card.classList.remove('byte-card-active', 'byte-card-inactive');
+      card.classList.remove(
+        'byte-card-active', 'byte-card-inactive',
+        'w-[170px]', 'short:w-[130px]', 'xshort:w-[110px]',
+        'w-[130px]', 'short:w-[100px]', 'xshort:w-[85px]'
+      );
 
       if (i === idx) {
-        card.classList.add('byte-card-active');
+        card.classList.add('byte-card-active', 'w-[170px]', 'short:w-[130px]', 'xshort:w-[110px]');
         // Apply byte-specific glow dynamically
         card.style.borderColor  = byte.color;
         card.style.boxShadow    = `0 0 28px ${byte.color}66, 0 12px 36px rgba(0,0,0,0.7)`;
@@ -78,7 +84,7 @@ window.ByteSelectScreen = (() => {
           glowEl.style.background = `radial-gradient(ellipse at 50% 30%, ${byte.color}30, transparent 70%)`;
         }
       } else {
-        card.classList.add('byte-card-inactive');
+        card.classList.add('byte-card-inactive', 'w-[130px]', 'short:w-[100px]', 'xshort:w-[85px]');
         card.style.borderColor  = '';
         card.style.boxShadow    = '';
         card.style.background   = '';
@@ -171,8 +177,16 @@ window.ByteSelectScreen = (() => {
     bytes.forEach((_, i) => {
       const card = document.getElementById(`byte-card-${i}`);
       if (!card) return;
-      card.classList.remove('byte-card-active', 'byte-card-inactive');
-      card.classList.add(i === 0 ? 'byte-card-active' : 'byte-card-inactive');
+      card.classList.remove(
+        'byte-card-active', 'byte-card-inactive',
+        'w-[170px]', 'short:w-[130px]', 'xshort:w-[110px]',
+        'w-[130px]', 'short:w-[100px]', 'xshort:w-[85px]'
+      );
+      if (i === 0) {
+        card.classList.add('byte-card-active', 'w-[170px]', 'short:w-[130px]', 'xshort:w-[110px]');
+      } else {
+        card.classList.add('byte-card-inactive', 'w-[130px]', 'short:w-[100px]', 'xshort:w-[85px]');
+      }
     });
 
     updateStats(bytes[0]);

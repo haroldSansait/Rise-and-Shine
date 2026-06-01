@@ -187,7 +187,6 @@ html, body {
   overflow: hidden;
   position: relative;
   flex-shrink: 0;
-  width: 170px;
   background: rgba(0, 0, 0, 0.4);
   transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
               opacity 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
@@ -333,7 +332,6 @@ html, body {
 }
 
 .byte-card-active {
-  width: 200px;
   opacity: 1;
   transform: scale(1) translateY(-8px);
   border: 2px solid var(--byte-color, var(--gold));
@@ -345,7 +343,6 @@ html, body {
 }
 
 .byte-card-inactive {
-  width: 150px;
   opacity: 0.5;
   transform: scale(0.85);
   border: 1px solid rgba(255,255,255,0.1);
@@ -1386,8 +1383,10 @@ html, body {
 }
 
 .battle-info-panel-restructured {
+  position: relative;
+  z-index: 30;
   min-height: 0;
-  overflow: hidden;
+  overflow: visible;
   padding: 8px 10px !important;
   background: #090d1f !important;
   border: 2px solid rgba(249, 193, 89, 0.32);

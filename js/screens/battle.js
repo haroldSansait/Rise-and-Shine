@@ -451,13 +451,15 @@ window.BattleScreen = (() => {
     const totalHearts = Math.ceil(maxHp / hpPerHeart);
     const activeHearts = Math.ceil(currentHp / hpPerHeart);
 
-    const wrap = document.createElement('div');
-    wrap.className = 'flex flex-wrap gap-1 ' + (isEnemy ? 'justify-end' : 'justify-start');
+    const shouldStack = totalHearts > 20;
 
-    for (let i = 0; i < totalHearts; i++) {
+    const wrap = document.createElement('div');
+    wrap.className = 'flex flex-col gap-1 w-full ' + (isEnemy ? 'items-end' : 'items-start');
+
+    const createHeartSVG = (index) => {
       const heart = document.createElement('span');
       heart.className = 'inline-flex w-4 h-4 select-none transition-all duration-300';
-      if (i < activeHearts) {
+      if (index < activeHearts) {
         // Red Heart SVG from Pixelarticons
         heart.innerHTML = `<svg class="w-4 h-4 inline-block align-middle fill-current text-red-500" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M2 5v5h2v2h2v2h2v2h2v2h4v-2h2v-2h2v-2h2v-2h2V5h-4v2h-2V5h-8v2H8V5H2zm2 2h2v2H4V7zm4 0h2v2H8V7zm6 2h-2V7h2v2zm4-2h2v2h-2V7z"/></svg>`;
         heart.style.filter = 'drop-shadow(0 0 5px rgba(239, 68, 68, 0.75))';
@@ -466,8 +468,35 @@ window.BattleScreen = (() => {
         heart.innerHTML = `<svg class="w-4 h-4 inline-block align-middle fill-current text-zinc-800" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M2 5v5h2v2h2v2h2v2h2v2h4v-2h2v-2h2v-2h2v-2h2V5h-4v2h-2V5h-8v2H8V5H2zm2 2h2v2H4V7zm4 0h2v2H8V7zm6 2h-2V7h2v2zm4-2h2v2h-2V7z"/></svg>`;
         heart.style.opacity = '0.3';
       }
-      wrap.appendChild(heart);
+      return heart;
+    };
+
+    if (shouldStack) {
+      const half = Math.ceil(totalHearts / 2);
+      
+      const row1 = document.createElement('div');
+      row1.className = 'flex gap-1 ' + (isEnemy ? 'justify-end' : 'justify-start');
+      for (let i = 0; i < half; i++) {
+        row1.appendChild(createHeartSVG(i));
+      }
+      
+      const row2 = document.createElement('div');
+      row2.className = 'flex gap-1 ' + (isEnemy ? 'justify-end' : 'justify-start');
+      for (let i = half; i < totalHearts; i++) {
+        row2.appendChild(createHeartSVG(i));
+      }
+      
+      wrap.appendChild(row1);
+      wrap.appendChild(row2);
+    } else {
+      const row = document.createElement('div');
+      row.className = 'flex flex-wrap gap-1 ' + (isEnemy ? 'justify-end' : 'justify-start');
+      for (let i = 0; i < totalHearts; i++) {
+        row.appendChild(createHeartSVG(i));
+      }
+      wrap.appendChild(row);
     }
+
     container.appendChild(wrap);
   }
 
@@ -515,9 +544,17 @@ window.BattleScreen = (() => {
       btn.className = 'battle-answer-btn';
       btn.setAttribute('role', 'radio');
       btn.setAttribute('aria-checked', 'false');
-      btn.innerHTML =
-        `<span class="battle-answer-letter">${letter}.</span>` +
-        `<span>${q.choices[letter]}</span>`;
+      
+      const letterSpan = document.createElement('span');
+      letterSpan.className = 'battle-answer-letter';
+      letterSpan.textContent = `${letter}.`;
+      
+      const textSpan = document.createElement('span');
+      textSpan.textContent = q.choices[letter];
+      
+      btn.appendChild(letterSpan);
+      btn.appendChild(textSpan);
+      
       btn.addEventListener('click', () => _selectAnswer(letter));
       answersEl.appendChild(btn);
     });

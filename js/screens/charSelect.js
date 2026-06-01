@@ -93,7 +93,7 @@ window.CharSelectScreen = (() => {
 
     chars.forEach((char, index) => {
       const wrap = document.createElement('div');
-      wrap.className = 'char-card char-card-inactive';
+      wrap.className = 'char-card char-card-inactive w-[170px] short:w-[130px] xshort:w-[110px]';
       wrap.dataset.index = index;
 
       // Premium corner pixel details
