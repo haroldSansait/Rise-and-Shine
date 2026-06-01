@@ -148,7 +148,7 @@ window.GAME_DATA = {
       dmg: 10,
       skill: 'Port Shield',
       skillEffect: 'Reduces incoming damage by 40% for one enemy attack. Perfect for tanking the hardest hits in a pinch.',
-      backstory: "Porturtle was designed to serve as a hardware firewall, defending server ports from overwhelming traffic surges. Over the years, its data-shell hardened with layers of military-grade encryption, making it the most resilient shield in the LUMEN network.",
+      backstory: "Porturtle was designed to serve as a hardware firewall, defending server ports from overwhelming traffic surges. Over the years, its data-shell hardened with layers of military-grade encryption, making it the most resilient shield in the LUMEN.",
       image: 'bytes/Poturtle/Porturtle_profile.png',
       cryCfg: { type: 'rumble', freq: 120, duration: 0.6 },
       color: '#4ade80',
@@ -586,7 +586,7 @@ window.GAME_DATA = {
       introCutsceneLines: [
         { speaker: 'boss',   text: 'Basics are everything.' },
         { speaker: 'boss',   text: 'If you cannot answer simple questions, you do not deserve to proceed.' },
-        { speaker: 'player', text: 'Professor, this isn\'t you. The LUMEN Network corrupted you.' },
+        { speaker: 'player', text: 'Professor, this isn\'t you. The LUMEN corrupted you.' },
         { speaker: 'boss',   text: 'Incorrect. The only path forward is through endless assessment.' },
         { speaker: 'player', text: 'Then we\'ll answer, fight, and bring you back.' },
       ],

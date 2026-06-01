@@ -237,7 +237,7 @@ window.BattleScreen = (() => {
     return [
       {
         title: '✦ WELCOME TO LUMEN COMBAT ✦',
-        text: 'Welcome to the LUMEN Network Core battle system! Your IT and coding knowledge is your greatest weapon here. Answer questions correctly to deal damage and defeat the corrupted Glitchborn enemies.',
+        text: 'Welcome to the LUMEN Core battle system! Your IT and coding knowledge is your greatest weapon here. Answer questions correctly to deal damage and defeat the corrupted Glitchborn enemies.',
         highlight: null,
         badge: null
       },
@@ -283,7 +283,7 @@ window.BattleScreen = (() => {
       },
       {
         title: '✦ TIME TO DEBUG! ✦',
-        text: 'The classroom has been corrupted by a Bit Mite Glitchborn! Use your knowledge, your hero passive, and your Byte\'s skill to drive it out. Answer every question with confidence and restore balance to the LUMEN Network. Let\'s go!',
+        text: 'The classroom has been corrupted by a Bit Mite Glitchborn! Use your knowledge, your hero passive, and your Byte\'s skill to drive it out. Answer every question with confidence and restore balance to the LUMEN. Let\'s go!',
         highlight: null,
         badge: null
       }

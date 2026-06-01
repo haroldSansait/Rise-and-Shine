@@ -19,15 +19,15 @@ window.PrelimMapScreen = (() => {
       node.id = `map-node-${level.id}`;
       node.className = `map-node ${level.locked ? 'map-node-locked' : 'map-node-active'} ${level.isBoss ? 'map-node-boss' : ''}`;
       node.style.left = level.position.left;
-      node.style.top  = level.position.top;
+      node.style.top = level.position.top;
 
       const inner = `
         <div class="map-node-body">
           <div class="map-node-ring"></div>
           ${level.locked
-            ? `<span class="map-node-lock">${icon('lock', 'w-4 h-4 inline-block align-middle fill-current text-zinc-500/80')}</span>`
-            : `<span class="map-node-num">${level.id}</span>`
-          }
+          ? `<span class="map-node-lock">${icon('lock', 'w-4 h-4 inline-block align-middle fill-current text-zinc-500/80')}</span>`
+          : `<span class="map-node-num">${level.id}</span>`
+        }
         </div>
         <div class="map-node-label">
           <div class="map-node-label-sub">${level.subtitle}</div>
@@ -63,7 +63,7 @@ window.PrelimMapScreen = (() => {
     // Build path between node centers
     const nodePositions = levels.map(l => {
       const pct_x = parseFloat(l.position.left) / 100;
-      const pct_y = parseFloat(l.position.top)  / 100;
+      const pct_y = parseFloat(l.position.top) / 100;
       return { x: pct_x, y: pct_y };
     });
 
@@ -94,7 +94,7 @@ window.PrelimMapScreen = (() => {
 
     AudioManager.playNodeSelectSFX();
     currentLevel = level;
-    sidebarOpen  = true;
+    sidebarOpen = true;
 
     // Populate sidebar content
     const content = document.getElementById('sidebar-content');
@@ -111,7 +111,7 @@ window.PrelimMapScreen = (() => {
           if (retryOverlay) {
             retryOverlay.classList.remove('hidden');
             gsap.fromTo(retryOverlay, { opacity: 0 }, { opacity: 1, duration: 0.25, ease: 'power2.out' });
-            
+
             const innerCard = retryOverlay.querySelector('.glass-panel');
             if (innerCard) {
               gsap.fromTo(innerCard, { scale: 0.85, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3, ease: 'back.out(1.15)' });
@@ -139,7 +139,7 @@ window.PrelimMapScreen = (() => {
   }
 
   function closeSidebar() {
-    sidebarOpen  = false;
+    sidebarOpen = false;
     currentLevel = null;
 
     gsap.to('#map-sidebar', {
@@ -264,9 +264,9 @@ window.PrelimMapScreen = (() => {
       // Level 1: Narrative Cutscene
       cutsceneLines = [
         { speaker: 'player', text: 'This was our classroom… but now it looks like a game level.' },
-        { speaker: 'byte',   text: 'Byte! Byte!' },
+        { speaker: 'byte', text: 'Byte! Byte!' },
         { speaker: 'player', text: 'So that glitchy creature there is a Glitchborn Byte... Bit Mite.' },
-        { speaker: 'byte',   text: 'Flux Core Bii!' },
+        { speaker: 'byte', text: 'Flux Core Bii!' },
         { speaker: 'player', text: 'Let\'s purge this corruption. Bit Mite, here we come!' }
       ];
     } else {
@@ -296,22 +296,23 @@ window.PrelimMapScreen = (() => {
   // ── Bytes Panel ───────────────────────────────────────────
   function openBytesPanel() {
     const panel = document.getElementById('bytes-panel');
-    const grid  = document.getElementById('bytes-panel-grid');
+    const grid = document.getElementById('bytes-panel-grid');
     if (!panel || !grid) return;
 
-    const saveData      = SaveSystem.load();
-    const unlockedIds   = saveData.unlockedBytes ?? ['poturtle', 'firewisp', 'lagoon'];
+    const saveData = SaveSystem.load();
+    const unlockedIds = saveData.unlockedBytes ?? ['poturtle', 'firewisp', 'lagoon'];
     const savedActiveId = (window.GameState.byte?.id) ?? saveData.byteId ?? 'poturtle';
-    const activeByteId  = unlockedIds.includes(savedActiveId) ? savedActiveId : unlockedIds[0];
-    const allBytes      = window.GAME_DATA.allBytes ?? [];
+    const activeByteId = unlockedIds.includes(savedActiveId) ? savedActiveId : unlockedIds[0];
+    const allBytes = window.GAME_DATA.allBytes ?? [];
 
     grid.innerHTML = '';
 
     allBytes.forEach(byte => {
       const isUnlocked = unlockedIds.includes(byte.id);
-      const isActive   = isUnlocked && byte.id === activeByteId;
+      const isActive = isUnlocked && byte.id === activeByteId;
 
       const card = document.createElement('div');
+      card.id = `bytes-card-${byte.id}`;
       card.className = `byte-card ${isUnlocked ? 'byte-card-unlocked' : 'byte-card-locked'} ${isActive ? 'byte-card-active' : ''}`;
       card.setAttribute('aria-label', isUnlocked ? byte.name : 'Locked Byte');
 
@@ -377,7 +378,17 @@ window.PrelimMapScreen = (() => {
     // Show panel if not already shown to prevent flashing/fade-in on content refresh
     if (panel.classList.contains('hidden')) {
       panel.classList.remove('hidden');
-      gsap.fromTo(panel, { opacity: 0 }, { opacity: 1, duration: 0.3 });
+      gsap.fromTo(panel, { opacity: 0 }, {
+        opacity: 1, duration: 0.3, onComplete: () => {
+          if (!SaveSystem.isBytesTutorialCompleted() && SaveSystem.load().prelimProgress >= 1) {
+            _startBytesTutorial();
+          }
+        }
+      });
+    } else {
+      if (!SaveSystem.isBytesTutorialCompleted() && SaveSystem.load().prelimProgress >= 1) {
+        _startBytesTutorial();
+      }
     }
   }
 
@@ -426,7 +437,7 @@ window.PrelimMapScreen = (() => {
 
   // ── Enter animation ───────────────────────────────────────
   function enter() {
-    sidebarOpen  = false;
+    sidebarOpen = false;
     currentLevel = null;
 
     // Apply save data (level locks, byte from save)
@@ -453,16 +464,16 @@ window.PrelimMapScreen = (() => {
       { scale: 1.05, opacity: 0 },
       { scale: 1, opacity: 1, duration: 1.2, ease: 'power2.out' }
     )
-    .fromTo('#map-header-panel',
-      { opacity: 0, y: -20 },
-      { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' },
-      '-=0.5'
-    )
-    .fromTo('.map-node',
-      { scale: 0, opacity: 0 },
-      { scale: 1, opacity: 1, duration: 0.4, stagger: 0.12, ease: 'back.out(1.6)' },
-      '-=0.3'
-    );
+      .fromTo('#map-header-panel',
+        { opacity: 0, y: -20 },
+        { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' },
+        '-=0.5'
+      )
+      .fromTo('.map-node',
+        { scale: 0, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.4, stagger: 0.12, ease: 'back.out(1.6)' },
+        '-=0.3'
+      );
 
     // Start prelim map BGM
     AudioManager.playBGM('prelimMap', { volume: 0.5 });
@@ -540,11 +551,11 @@ window.PrelimMapScreen = (() => {
     if (!hud) return;
 
     // HP display: use carry-over if available
-    const saveData   = SaveSystem.load();
-    const baseHp     = char.hp;
-    const byteHp     = byte.hp;
-    const currentHp  = window.GameState.playerHp ?? (baseHp + byteHp);
-    const maxHp      = window.GameState.playerMaxHp ?? saveData.playerMaxHp ?? (baseHp + byteHp);
+    const saveData = SaveSystem.load();
+    const baseHp = char.hp;
+    const byteHp = byte.hp;
+    const currentHp = window.GameState.playerHp ?? (baseHp + byteHp);
+    const maxHp = window.GameState.playerMaxHp ?? saveData.playerMaxHp ?? (baseHp + byteHp);
 
     hud.innerHTML = `
       <div class="flex items-center gap-3">
@@ -662,20 +673,20 @@ window.PrelimMapScreen = (() => {
     document.body.appendChild(modal);
 
     // GSAP Entrance
-    gsap.fromTo(modal.querySelector('.glass-panel'), 
-      { scale: 0.8, opacity: 0 }, 
+    gsap.fromTo(modal.querySelector('.glass-panel'),
+      { scale: 0.8, opacity: 0 },
       { scale: 1, opacity: 1, duration: 0.5, ease: 'back.out(1.5)' }
     );
-    gsap.fromTo(modal, 
-      { opacity: 0 }, 
+    gsap.fromTo(modal,
+      { opacity: 0 },
       { opacity: 1, duration: 0.3 }
     );
 
     document.getElementById('btn-claim-byte').addEventListener('click', () => {
       AudioManager.playConfirmSFX();
       gsap.to(modal, {
-        opacity: 0, 
-        duration: 0.25, 
+        opacity: 0,
+        duration: 0.25,
         onComplete: () => {
           modal.remove();
           // Open the bytes selection panel so the user can easily see their new byte and choose to switch!
@@ -841,6 +852,155 @@ window.PrelimMapScreen = (() => {
         });
       });
     }
+  }
+
+  // ── Bytes Collection Tutorial Walkthrough ───────────────────
+  function _startBytesTutorial() {
+    // Avoid double instantiation if called multiple times or already active
+    if (document.getElementById('bytes-tutorial-overlay')) return;
+
+    let tutorialStep = 0;
+    const slides = [
+      {
+        title: "✦ WELCOME TO BYTES COLLECTION ✦",
+        text: "Welcome to your Bytes Collection! Pursuing knowledge in the academy unlocks digital companions. Let's see how they work.",
+        targetId: null
+      },
+      {
+        title: "✦ STARTER COMPANIONS ✦",
+        text: "These are your starter companions: Porturtle, Firewisp, and Lagoon. Each possesses unique HP and damage modifiers to boost your character in battle.",
+        targetId: "bytes-card-poturtle"
+      },
+      {
+        title: "✦ NEW BYTE UNLOCKED ✦",
+        text: "Here is Pinglet, the network scout Byte you just unlocked by clearing Level 1! Its speed and diagnostic tools are now yours to utilize.",
+        targetId: "bytes-card-pinglet"
+      },
+      {
+        title: "✦ SWITCH COMPANIONS ✦",
+        text: "To equip Pinglet as your active companion, click the 'SWITCH' button on its card. The active companion's skill will be usable during combat!",
+        targetId: "bytes-card-pinglet"
+      },
+      {
+        title: "✦ LOCKED ENTRIES ✦",
+        text: "Other companion Bytes remain locked inside the LUMEN. Hover or check their details to view their unique requirements and unlock tips.",
+        targetId: "bytes-card-bitbug"
+      },
+      {
+        title: "✦ PREPARE FOR BATTLE ✦",
+        text: "You are now equipped with knowledge! Close the Bytes panel to return to the map and take on Level 2 with your companion!",
+        targetId: "btn-bytes-close"
+      }
+    ];
+
+    // Create tutorial overlay element
+    const overlay = document.createElement('div');
+    overlay.id = 'bytes-tutorial-overlay';
+    overlay.className = 'fixed bottom-8 left-1/2 -translate-x-1/2 z-[70] max-w-xl w-full px-4 select-none pointer-events-auto';
+    overlay.style.opacity = '0';
+    overlay.style.transform = 'translate(-50%, 20px)';
+    overlay.innerHTML = `
+      <div class="relative glass-panel p-6 border-2 border-gold shadow-[0_0_50px_rgba(249,193,89,0.3)] text-center bg-[#060814]/95 backdrop-blur-md">
+        <!-- Slide counter -->
+        <div id="bytes-tutorial-counter" class="font-pixel text-[7px] text-white/35 tracking-widest mb-1.5">1 / 6</div>
+        <div id="bytes-tutorial-title" class="font-pixel text-[9px] text-gold tracking-widest mb-2.5 leading-relaxed uppercase">
+          ✦ BYTES COLLECTION TUTORIAL ✦
+        </div>
+        <p id="bytes-tutorial-text" class="font-ui text-white/90 text-sm leading-relaxed mb-5 min-h-[50px]"></p>
+        <div class="flex gap-4 justify-center">
+          <button id="btn-bytes-tutorial-skip" class="pixel-btn-secondary px-5 py-2 font-pixel text-white text-[8px] tracking-widest cursor-pointer active:scale-95 transition-all select-none">
+            SKIP
+          </button>
+          <button id="btn-bytes-tutorial-dismiss" class="pixel-btn px-8 py-2.5 font-pixel text-gold text-[8px] tracking-widest cursor-pointer active:scale-95 transition-all select-none">
+            NEXT ➜
+          </button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(overlay);
+    gsap.to(overlay, { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out' });
+
+    // Lock interactions outside tutorial except on the highlighted card
+    const panel = document.getElementById('bytes-panel');
+    if (panel) {
+      panel.classList.add('tutorial-active');
+    }
+
+    function updateStep() {
+      // Clear previous highlights
+      document.querySelectorAll('.bytes-tutorial-highlight').forEach(el => {
+        el.classList.remove('bytes-tutorial-highlight');
+      });
+
+      const slide = slides[tutorialStep];
+
+      // Update dialogue content
+      document.getElementById('bytes-tutorial-counter').textContent = `${tutorialStep + 1} / ${slides.length}`;
+      document.getElementById('bytes-tutorial-title').textContent = slide.title;
+      document.getElementById('bytes-tutorial-text').textContent = slide.text;
+
+      // Apply highlighting
+      if (slide.targetId) {
+        const target = document.getElementById(slide.targetId);
+        if (target) {
+          target.classList.add('bytes-tutorial-highlight');
+
+          // Scroll highlight target into view smoothly if needed
+          target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+
+      // If last step, change Next button to FINISH
+      const btnNext = document.getElementById('btn-bytes-tutorial-dismiss');
+      if (btnNext) {
+        if (tutorialStep === slides.length - 1) {
+          btnNext.innerHTML = 'FINISH ✓';
+        } else {
+          btnNext.innerHTML = 'NEXT ➜';
+        }
+      }
+    }
+
+    function endTutorial() {
+      // Save progress
+      SaveSystem.markBytesTutorialCompleted();
+
+      // Clean up overlay and highlights
+      gsap.to(overlay, {
+        opacity: 0,
+        y: 20,
+        duration: 0.25,
+        onComplete: () => {
+          overlay.remove();
+          document.querySelectorAll('.bytes-tutorial-highlight').forEach(el => {
+            el.classList.remove('bytes-tutorial-highlight');
+          });
+          if (panel) {
+            panel.classList.remove('tutorial-active');
+          }
+        }
+      });
+    }
+
+    // Bind event listeners
+    document.getElementById('btn-bytes-tutorial-skip').addEventListener('click', () => {
+      AudioManager.playClickSFX();
+      endTutorial();
+    });
+
+    document.getElementById('btn-bytes-tutorial-dismiss').addEventListener('click', () => {
+      AudioManager.playConfirmSFX();
+      tutorialStep++;
+      if (tutorialStep >= slides.length) {
+        endTutorial();
+      } else {
+        updateStep();
+      }
+    });
+
+    // Start with step 0
+    updateStep();
   }
 
   function init() {

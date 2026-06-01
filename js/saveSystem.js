@@ -20,6 +20,7 @@ window.SaveSystem = (() => {
       prelimProgress:     0,    // highest level cleared (0 = none)
       revealsLeft:        2,    // limit of 2 reveals for the entire Prelim Arc!
       tutorialCompleted:  false, // Level 1 walkthrough tutorial completion flag
+      bytesTutorialCompleted: false, // Bytes panel tutorial completion flag
       levelLocks: {
         1: false,
         2: true,
@@ -189,6 +190,19 @@ window.SaveSystem = (() => {
     return data.tutorialCompleted === true;
   }
 
+  /** Mark the Bytes panel tutorial as completed. */
+  function markBytesTutorialCompleted() {
+    const data = load();
+    data.bytesTutorialCompleted = true;
+    save(data);
+  }
+
+  /** Check if the Bytes panel tutorial has been completed. */
+  function isBytesTutorialCompleted() {
+    const data = load();
+    return data.bytesTutorialCompleted === true;
+  }
+
   /**
    * Apply saved state to window.GameState and GAME_DATA level locks.
    * Call this on entering the prelim map so locks reflect saved progress.
@@ -240,6 +254,8 @@ window.SaveSystem = (() => {
     isByteIntroduced,
     markTutorialCompleted,
     isTutorialCompleted,
+    markBytesTutorialCompleted,
+    isBytesTutorialCompleted,
     applyToGameState,
   };
 

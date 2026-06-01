@@ -1701,4 +1701,16 @@ html, body {
   }
 }
 
+
+/* ── Bytes Panel Tutorial Highlighting ── */
+.bytes-tutorial-highlight {
+  position: relative !important;
+  z-index: 60 !important;
+  box-shadow: 0 0 0 9999px rgba(4, 6, 18, 0.85), 0 0 35px #F9C159 !important;
+  border-color: #F9C159 !important;
+  transform: scale(1.03) !important;
+  transition: all 0.3s ease !important;
+}
+
 /* end of stylesheet */
+
